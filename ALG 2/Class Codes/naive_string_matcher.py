@@ -13,4 +13,4 @@ if __name__ == "__main__":
     print('Insert your pattern:')
     pattern = input()
 
-    naive_string_matcher(text, pattern)    
+    naive_string_matcher(text, pattern)
