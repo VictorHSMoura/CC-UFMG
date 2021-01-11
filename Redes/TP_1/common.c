@@ -22,6 +22,7 @@ int addrparse(const char *addrstr, const char *portstr, struct sockaddr_storage 
     }
     port = htons(port); // host to network short
 
+    // parse do endereço para IPv4
     struct in_addr inaddr4; // 32-bit IP address
     if (inet_pton(AF_INET, addrstr, &inaddr4)) {
         struct sockaddr_in *addr4 = (struct sockaddr_in *)storage;
@@ -31,15 +32,7 @@ int addrparse(const char *addrstr, const char *portstr, struct sockaddr_storage 
         return 0;
     }
 
-    struct in6_addr inaddr6; // 128-bit IPv6 address
-    if (inet_pton(AF_INET6, addrstr, &inaddr6)) {
-        struct sockaddr_in6 *addr6 = (struct sockaddr_in6 *)storage;
-        addr6->sin6_family = AF_INET6;
-        addr6->sin6_port = port;
-        // addr6->sin6_addr = inaddr6;
-        memcpy(&(addr6->sin6_addr), &inaddr6, sizeof(inaddr6));
-        return 0;
-    }
+    // se o parse falhar, retorna -1
     return -1;
 }
 
@@ -55,14 +48,8 @@ void addrtostr(const struct sockaddr *addr, char *str, ssize_t strsize) {
             logexit("ntop");
         }
         port = ntohs(addr4->sin_port); // network to host short
-    } else if (addr->sa_family == AF_INET6) {
-        version = 6;
-        struct sockaddr_in6 *addr6 = (struct sockaddr_in6 *)addr;
-        if(!inet_ntop(AF_INET6, &(addr6->sin6_addr), addrstr, INET6_ADDRSTRLEN + 1)) {
-            logexit("ntop");
-        }
-        port = ntohs(addr6->sin6_port); // network to host short
     } else {
+        // no caso do protocolo não ser IPv4
         logexit("unknown protocol family.");
     }
     if(str) {
@@ -84,13 +71,8 @@ int server_sockaddr_init(const char *proto, const char *portstr, struct sockaddr
         addr4->sin_addr.s_addr = INADDR_ANY;
         addr4->sin_port = port;
         return 0;
-    } else if (0 == strcmp(proto, "v6")) {
-        struct sockaddr_in6 *addr6 = (struct sockaddr_in6 *)storage;
-        addr6->sin6_family = AF_INET6;
-        addr6->sin6_addr = in6addr_any;
-        addr6->sin6_port = port;
-        return 0;
     } else {
+        // retorna -1 caso protocolo não seja IPv4
         return -1;
     }
 }

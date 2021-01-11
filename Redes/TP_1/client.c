@@ -22,8 +22,12 @@ int main(int argc, char **argv) {
     if(argc < 3) {
         usage(argc, argv);
     }
+
+    char *ip = argv[1];
+    char *port = argv[2];
+
     struct sockaddr_storage storage;
-    if(0 != addrparse(argv[1], argv[2], &storage)) {
+    if(0 != addrparse(ip, port, &storage)) {
         usage(argc, argv);
     }
 
