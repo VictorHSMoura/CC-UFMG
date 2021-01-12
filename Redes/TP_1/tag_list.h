@@ -2,7 +2,7 @@
 
 struct _tag_cell{
 	char *tag;
-    user_list *users;
+    user_list users;
 	struct _tag_cell *next;
 };
 typedef struct _tag_cell tag_cell;
@@ -22,5 +22,6 @@ int tag_list_remove_item_start(tag_list *l);
 int tag_list_remove_item_end(tag_list *l);
 void tag_list_remove_by_pointer(tag_list *l, tag_cell *tag_before);
 tag_cell *tag_list_get_first_item(tag_list *l);
+tag_cell *tag_list_get_last_item(tag_list *l);
 void tag_list_print_list(tag_list *l);
 void tag_list_free_list(tag_list *l);

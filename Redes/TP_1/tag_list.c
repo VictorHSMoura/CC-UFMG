@@ -1,6 +1,7 @@
 #include "tag_list.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 void tag_list_make_empty_list(tag_list *l) {
     l->start = (tag_cell *) malloc(sizeof(tag_cell));
@@ -15,7 +16,12 @@ int tag_list_is_list_empty(tag_list *l) {
 void tag_list_add_item_start(tag_list *l, char *tag) {
     tag_cell *new_cell;
     new_cell = (tag_cell *) malloc(sizeof(tag_cell));
-    l->start->tag = tag;
+    
+    l->start->tag = (char *) malloc((strlen(tag) + 1)*sizeof(char));
+    memcpy(l->start->tag, tag, strlen(tag) + 1);
+    l->start->tag[strlen(tag)] = '\0';
+    user_list_make_empty_list(&l->start->users);
+    
     new_cell->next = l->start;
     l->start = new_cell;
 }
@@ -23,13 +29,17 @@ void tag_list_add_item_start(tag_list *l, char *tag) {
 void tag_list_add_item_end(tag_list *l, char *tag) {
     l->end->next = (tag_cell *) malloc(sizeof(tag_cell));
     l->end = l->end->next;
-    l->end->tag = tag;
+    l->end->tag = (char *) malloc(strlen(tag)*sizeof(char));
+    memcpy(l->end->tag, tag, strlen(tag));
+    user_list_make_empty_list(&l->end->users);
     l->end->next = NULL;
 }
 
 void tag_list_add_item_by_pointer(tag_list *l, tag_cell *tag_before, char *tag) {
     tag_cell *new_item = (tag_cell *) malloc(sizeof(tag_cell));
-    new_item->tag = tag;
+    new_item->tag = (char *) malloc(strlen(tag)*sizeof(char));
+    memcpy(new_item->tag, tag, strlen(tag));
+    user_list_make_empty_list(&new_item->users);
     new_item->next = tag_before->next;
     tag_before->next = new_item;
 
@@ -90,14 +100,19 @@ tag_cell *tag_list_get_first_item(tag_list *l) {
     return l->start->next;
 }
 
+tag_cell *tag_list_get_last_item(tag_list *l) {
+    return l->end;
+}
+
 void tag_list_print_list(tag_list *l) {
     tag_cell *p = tag_list_get_first_item(l);
+    int counter = 0;
 
     while (p != NULL) {
-        printf("%s ", p->tag);
+        counter++;
+        printf("%s\n", p->tag);
         p = p->next;
     }
-    printf("\n");
 }
 
 void tag_list_free_list(tag_list *l) {
