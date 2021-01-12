@@ -112,10 +112,8 @@ tag_cell *tag_list_get_last_item(tag_list *l) {
 
 void tag_list_print_list(tag_list *l) {
     tag_cell *p = tag_list_get_first_item(l);
-    int counter = 0;
 
     while (p != NULL) {
-        counter++;
         printf("%s\n", p->tag);
         p = p->next;
     }

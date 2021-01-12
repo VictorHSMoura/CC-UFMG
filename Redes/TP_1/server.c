@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
+#include <signal.h>
 #include <unistd.h>
 
 #include <sys/types.h>
@@ -45,7 +46,7 @@ int extract_tags(char *msg, tag_list *list) {
         } else if(msg[i] == '#' && hadHash == 1) {
             hadHash = 0;
         }
-        if ((msg[i] == ' ' || i == strlen(msg) - 1) && hadHash == 1) {
+        if (((i != strlen(msg - 1) && msg[i+1] == ' ') || i == strlen(msg) - 1) && hadHash == 1) {
             end_index = i;
             hadHash = 0;
             tag_count++;
@@ -62,6 +63,7 @@ int extract_tags(char *msg, tag_list *list) {
 // TODO: arrumar forma de fechar sock de mensagem quando necessário
 int process_msg(int csock, char *msg) {
     int valid_msg = check_text_valid(msg);
+    int count;
 
     // checking invalid conditions
     if (valid_msg == 0) {
@@ -81,8 +83,12 @@ int process_msg(int csock, char *msg) {
 
     if (strcmp(msg, "##kill") == 0) {
         close(csock);
+        pthread_kill(pthread_self(), 0);
         return 4;
     }
+
+    char out_msg[BUFSZ];
+    memset(out_msg, 0, BUFSZ);
 
     // tag subscription
     // TODO: acrescentar tags em lista de tags
@@ -103,12 +109,13 @@ int process_msg(int csock, char *msg) {
         }
 
         if(user_list_find(&user_tag_cell->users, csock) != NULL) {
-            sprintf(msg, "already subscribed +%.488s\n", tag);
+            sprintf(out_msg, "already subscribed +%.488s\n", tag);
+            count = send(csock, out_msg, strlen(out_msg) + 1, 0);
         } else {
             user_list_add_item_end(&user_tag_cell->users, csock);
-            sprintf(msg, "subscribed +%.488s\n", tag);
+            sprintf(out_msg, "subscribed +%.488s\n", tag);
+            count = send(csock, out_msg, strlen(out_msg) + 1, 0);
         }
-        return 0;
     } else if (msg[0] == '-') {
         char tag[strlen(msg)];
         memcpy(tag, msg + 1, strlen(msg));
@@ -122,40 +129,48 @@ int process_msg(int csock, char *msg) {
             user_cell *user = user_list_find(&user_tag_cell->users, csock);
             if(user != NULL) {
                 user_list_remove_by_pointer(&user_tag_cell->users, user);
-                sprintf(msg, "unsubscribed +%.488s\n", tag);
+                sprintf(out_msg, "unsubscribed +%.488s\n", tag);
+                count = send(csock, out_msg, strlen(out_msg) + 1, 0);
             } else {
-                sprintf(msg, "not subscribed +%.488s\n", tag);
+                sprintf(out_msg, "not subscribed +%.488s\n", tag);
+                count = send(csock, out_msg, strlen(out_msg) + 1, 0);
             }
         }
-
         // sprintf(msg, "unsubscribed -%.488s\n", tag);
-        return 0;
     } else {
         tag_list list;
         tag_list_make_empty_list(&list);
 
-        int count = extract_tags(msg, &list);
-        if (count > 0) {
-            for(int i = 0; i < count; i++) {
-                char *tag = tag_list_get_first_item(&list)->tag;
-                
-                // checa usuarios inscritos na tag e distribui mensagem
-                tag_cell *tag_in_list = tag_list_find(&all_tags, tag);
-                if (tag_in_list != NULL) {
-                    user_list users = tag_in_list->next->users;
-                    user_cell *info = users.start;
-                    while(info != NULL) {
-                        count = send(info->user_id, msg, strlen(msg) + 1, 0);
-                        if (count != strlen(msg) + 1) {
-                            logexit("send");
-                        }
+        int count_tags = extract_tags(msg, &list);
+        for(int i = 0; i < count_tags; i++) {
+            char *tag = tag_list_get_first_item(&list)->tag;
+            
+            // checa usuarios inscritos na tag e distribui mensagem
+            tag_cell *tag_in_list = tag_list_find(&all_tags, tag);
+            if (tag_in_list != NULL) {
+                user_list users = tag_in_list->next->users;
+                user_cell *info = users.start->next;
+                while(info != NULL) {
+                    printf("%s\n", msg);
+                    printf("%s\n", msg);
+                    printf("%s\n", msg);
+                    printf("%d\n", info->user_id);
+                    printf("%d\n", info->user_id);
+                    printf("%d\n", info->user_id);
+                    sprintf(out_msg, "[msg] %s\n", msg);
+                    count = send(info->user_id, out_msg, strlen(out_msg) + 1, 0);
+                    if (count != strlen(out_msg) + 1) {
+                        logexit("send");
                     }
+                    info = info->next;
                 }
-                // remove tag da lista temporária
-                tag_list_remove_item_start(&list);
             }
+            // remove tag da lista temporária
+            tag_list_remove_item_start(&list);
         }
     }
+
+    printf("[msg] %s\n", msg);
     
     return 0;
 }
@@ -166,41 +181,58 @@ void *client_thread(void *data) {
 
     char caddrstr[BUFSZ];
     addrtostr(caddr, caddrstr, BUFSZ);
-
     printf("[log] connection from %s\n", caddrstr);
 
-    char buf[BUFSZ];
-    memset(buf, 0, BUFSZ);
-    ssize_t count = recv(cdata->csock, buf, BUFSZ, 0);
+    while(1) {
+        char buf[BUFSZ];
+        memset(buf, 0, BUFSZ);
 
-    
-    if(buf[strlen(buf) - 1] == '\n') {
-        buf[strlen(buf) - 1] = '\0';
-    }
-    
-    int status = process_msg(cdata->csock, buf);
-    
-    if (status == 0) {
-        printf("[msg] %s, %d bytes: %s\n", caddrstr, (int)count, buf);
-        // sprintf(buf, "remote endpoint: %.1000s\n", caddrstr);
-    } else if (status == 1) {
-        printf("[log] Client %s disconnected due to invalid character\n", caddrstr);
-    } else if (status == 2) {
-        printf("[log] Client %s disconnected due to blank message\n", caddrstr);
-    } else if (status == 3) {
-        printf("[log] Client %s disconnected due to oversized message\n", caddrstr);
-    } else if (status == 4) {
-        printf("[log] Client %s disconnected due to ##kill\n", caddrstr);
-        pthread_exit(EXIT_SUCCESS);
-        exit(EXIT_SUCCESS);
+        int total = 0;
+
+        while(1) {
+            int count = recv(cdata->csock, buf + total, BUFSZ - total, 0);
+            total += count;
+            if(count == 0 || buf[strlen(buf) - 1] == '\n')
+                break;
+        }
+
+        if(total == 0) {
+            printf("total: %d\n", total);
+            printf("[log] Connection with %s has been closed on the client side\n", caddrstr);
+            break;
+        }
+        
+
+        if(buf[strlen(buf) - 1] == '\n') {
+            buf[strlen(buf) - 1] = '\0';
+        }
+        
+        int status = process_msg(cdata->csock, buf);
+        
+        if (status == 1) {
+            printf("[log] Client %s disconnected due to invalid character\n", caddrstr);
+            break;
+        } else if (status == 2) {
+            printf("[log] Client %s disconnected due to blank message\n", caddrstr);
+            break;
+        } else if (status == 3) {
+            printf("[log] Client %s disconnected due to oversized message\n", caddrstr);
+            break;
+        } else if (status == 4) {
+            printf("[log] Client %s disconnected due to ##kill\n", caddrstr);
+            pthread_exit(EXIT_SUCCESS);
+            exit(EXIT_SUCCESS);
+            break;
+        }
+
+        // tag_list_print_list(&all_tags);
+
+        // count = send(cdata->csock, buf, strlen(buf) + 1, 0);
+        // if (count != strlen(buf) + 1) {
+        //     logexit("send");
+        // }
     }
 
-    tag_list_print_list(&all_tags);
-
-    count = send(cdata->csock, buf, strlen(buf) + 1, 0);
-    if (count != strlen(buf) + 1) {
-        logexit("send");
-    }
     close(cdata->csock);
 
     pthread_exit(EXIT_SUCCESS);
@@ -261,7 +293,7 @@ int main(int argc, char **argv) {
             logexit("malloc");
         }
         cdata->csock = csock;
-        memcpy(&(cdata->storage), &storage, sizeof(storage));
+        memcpy(&(cdata->storage), &cstorage, sizeof(cstorage));
 
         pthread_t tid;
         pthread_create(&tid, NULL, client_thread, cdata);
