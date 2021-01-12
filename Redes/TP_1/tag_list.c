@@ -29,17 +29,23 @@ void tag_list_add_item_start(tag_list *l, char *tag) {
 void tag_list_add_item_end(tag_list *l, char *tag) {
     l->end->next = (tag_cell *) malloc(sizeof(tag_cell));
     l->end = l->end->next;
-    l->end->tag = (char *) malloc(strlen(tag)*sizeof(char));
-    memcpy(l->end->tag, tag, strlen(tag));
+    
+    l->end->tag = (char *) malloc((strlen(tag) + 1)*sizeof(char));
+    memcpy(l->end->tag, tag, strlen(tag) + 1);
+    l->end->tag[strlen(tag)] = '\0';
     user_list_make_empty_list(&l->end->users);
+    
     l->end->next = NULL;
 }
 
 void tag_list_add_item_by_pointer(tag_list *l, tag_cell *tag_before, char *tag) {
     tag_cell *new_item = (tag_cell *) malloc(sizeof(tag_cell));
-    new_item->tag = (char *) malloc(strlen(tag)*sizeof(char));
-    memcpy(new_item->tag, tag, strlen(tag));
+    
+    new_item->tag = (char *) malloc((strlen(tag) + 1)*sizeof(char));
+    memcpy(new_item->tag, tag, strlen(tag) + 1);
+    new_item->tag[strlen(tag)] = '\0';
     user_list_make_empty_list(&new_item->users);
+    
     new_item->next = tag_before->next;
     tag_before->next = new_item;
 
@@ -78,7 +84,7 @@ int tag_list_remove_item_end(tag_list *l) {
 tag_cell *tag_list_find(tag_list *l, char *tag) {
     tag_cell *p = l->start;
     while (p->next != NULL) {
-        if (p->next->tag == tag)
+        if (strcmp(p->next->tag, tag) == 0)
             return p;
         p = p->next;
     }

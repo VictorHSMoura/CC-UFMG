@@ -89,15 +89,17 @@ int process_msg(int csock, char *msg) {
     if (msg[0] == '+') {
         char tag[strlen(msg)];
         memcpy(tag, msg + 1, strlen(msg));
+        tag[strlen(msg) - 1] = '\0';
 
         tag_cell *user_tag_cell = tag_list_find(&all_tags, tag);
         
-        
         // se a tag não for encontrada na lista, uma nova tag é criada
         if (user_tag_cell == NULL) {
-            tag_list_add_item_start(&all_tags, tag);
-            user_tag_cell = tag_list_get_first_item(&all_tags);
-            user_list_add_item_end(&user_tag_cell->users, csock);
+            tag_list_add_item_end(&all_tags, tag);
+            user_tag_cell = tag_list_get_last_item(&all_tags);
+        } else {
+            // pointer correction
+            user_tag_cell = user_tag_cell->next;
         }
 
         if(user_list_find(&user_tag_cell->users, csock) != NULL) {
@@ -110,7 +112,23 @@ int process_msg(int csock, char *msg) {
     } else if (msg[0] == '-') {
         char tag[strlen(msg)];
         memcpy(tag, msg + 1, strlen(msg));
-        sprintf(msg, "unsubscribed -%.488s\n", tag);
+
+        tag_cell *user_tag_cell = tag_list_find(&all_tags, tag);
+        if (user_tag_cell == NULL) {
+            sprintf(msg, "not subscribed -%.488s\n", tag);
+        } else {
+            // pointer correction
+            user_tag_cell = user_tag_cell->next;
+            user_cell *user = user_list_find(&user_tag_cell->users, csock);
+            if(user != NULL) {
+                user_list_remove_by_pointer(&user_tag_cell->users, user);
+                sprintf(msg, "unsubscribed +%.488s\n", tag);
+            } else {
+                sprintf(msg, "not subscribed +%.488s\n", tag);
+            }
+        }
+
+        // sprintf(msg, "unsubscribed -%.488s\n", tag);
         return 0;
     } else {
         tag_list list;
@@ -121,8 +139,18 @@ int process_msg(int csock, char *msg) {
             for(int i = 0; i < count; i++) {
                 char *tag = tag_list_get_first_item(&list)->tag;
                 
-                // TODO: checa usuarios inscritos na tag e distribui mensagem
-
+                // checa usuarios inscritos na tag e distribui mensagem
+                tag_cell *tag_in_list = tag_list_find(&all_tags, tag);
+                if (tag_in_list != NULL) {
+                    user_list users = tag_in_list->next->users;
+                    user_cell *info = users.start;
+                    while(info != NULL) {
+                        count = send(info->user_id, msg, strlen(msg) + 1, 0);
+                        if (count != strlen(msg) + 1) {
+                            logexit("send");
+                        }
+                    }
+                }
                 // remove tag da lista temporária
                 tag_list_remove_item_start(&list);
             }
