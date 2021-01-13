@@ -121,10 +121,14 @@ void tag_list_print_list(tag_list *l) {
 
 void tag_list_free_list(tag_list *l) {
     tag_cell *p = l->start;
+    int count = 0;
 
     while (p != NULL) {
         l->start = p->next;
+        if (count != 0)
+            user_list_free_list(&p->users);
         free(p);
         p = l->start;
+        count ++;
     }
 }

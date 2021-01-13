@@ -45,10 +45,9 @@ void *client_listen_thread(void *data) {
             pthread_exit(EXIT_SUCCESS);
         }
 
-        printf("received %u bytes\n", total);
-        puts(buf);
+        // printf("received %u bytes\n", total);
+        printf("%s", buf);
     }
-    printf("fim thread\n");
     pthread_exit(EXIT_SUCCESS);
 }
 

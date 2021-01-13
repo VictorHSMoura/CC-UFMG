@@ -46,7 +46,7 @@ int extract_tags(char *msg, tag_list *list) {
         } else if(msg[i] == '#' && hadHash == 1) {
             hadHash = 0;
         }
-        if (((i != strlen(msg - 1) && msg[i+1] == ' ') || i == strlen(msg) - 1) && hadHash == 1) {
+        if (((i != strlen(msg) - 1 && msg[i+1] == ' ') || i == strlen(msg) - 1) && hadHash == 1) {
             end_index = i;
             hadHash = 0;
             tag_count++;
@@ -83,7 +83,7 @@ int process_msg(int csock, char *msg) {
 
     if (strcmp(msg, "##kill") == 0) {
         close(csock);
-        pthread_kill(pthread_self(), 0);
+        // pthread_kill(pthread_self(), 0);
         return 4;
     }
 
@@ -151,12 +151,6 @@ int process_msg(int csock, char *msg) {
                 user_list users = tag_in_list->next->users;
                 user_cell *info = users.start->next;
                 while(info != NULL) {
-                    printf("%s\n", msg);
-                    printf("%s\n", msg);
-                    printf("%s\n", msg);
-                    printf("%d\n", info->user_id);
-                    printf("%d\n", info->user_id);
-                    printf("%d\n", info->user_id);
                     sprintf(out_msg, "[msg] %s\n", msg);
                     count = send(info->user_id, out_msg, strlen(out_msg) + 1, 0);
                     if (count != strlen(out_msg) + 1) {
@@ -168,11 +162,22 @@ int process_msg(int csock, char *msg) {
             // remove tag da lista temporária
             tag_list_remove_item_start(&list);
         }
+        tag_list_free_list(&list);
     }
 
     printf("[msg] %s\n", msg);
-    
     return 0;
+}
+
+void clean_user_tags(int csock) {
+    for(tag_cell* tag_in_list = tag_list_get_first_item(&all_tags); tag_in_list != NULL; tag_in_list = tag_in_list->next) {
+        user_list user = tag_in_list->users;
+        
+        user_cell *user_in_list = user_list_find(&user, csock);
+        if (user_in_list != NULL) {
+            user_list_remove_by_pointer(&user, user_in_list);
+        }
+    }
 }
 
 void *client_thread(void *data) {
@@ -220,20 +225,16 @@ void *client_thread(void *data) {
             break;
         } else if (status == 4) {
             printf("[log] Client %s disconnected due to ##kill\n", caddrstr);
-            pthread_exit(EXIT_SUCCESS);
+            // pthread_exit(EXIT_SUCCESS);
+            tag_list_free_list(&all_tags);
             exit(EXIT_SUCCESS);
             break;
         }
-
-        // tag_list_print_list(&all_tags);
-
-        // count = send(cdata->csock, buf, strlen(buf) + 1, 0);
-        // if (count != strlen(buf) + 1) {
-        //     logexit("send");
-        // }
     }
 
     close(cdata->csock);
+
+    clean_user_tags(cdata->csock);
 
     pthread_exit(EXIT_SUCCESS);
 }
