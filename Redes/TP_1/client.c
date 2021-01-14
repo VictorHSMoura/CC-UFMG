@@ -23,32 +23,24 @@ struct client_data_listen {
     int sock;
 };
 
-void *client_listen_thread(void *data) {
-    struct client_data_listen *cdata = (struct client_data_listen *)data;
-    int sock = cdata->sock;
+int connection;
 
+void *client_send_thread(void *data) {
+    struct client_data_listen *cdata = (struct client_data_listen *)data;
     while(1) {
         char buf[BUFSZ];
         memset(buf, 0, BUFSZ);
-        unsigned total = 0;
-        while(1) {
-            int count = recv(sock, buf + total, BUFSZ - total, 0);
-            total += count;
-            if (count == 0 || buf[strlen(buf) - 1] == '\n') {
-                // Connection terminated
-                break;
-            }
-            
+        
+        // printf("mensagem> ");
+        fgets(buf, BUFSZ-1, stdin);
+        
+        int count = send(cdata->sock, buf, strlen(buf) + 1, 0);
+        if (count != strlen(buf) + 1) {
+            close(cdata->sock);
+            free(cdata);
+            logexit("send");
         }
-        if (total == 0) {
-            close(sock);
-            pthread_exit(EXIT_SUCCESS);
-        }
-
-        // printf("received %u bytes\n", total);
-        printf("%s", buf);
     }
-    pthread_exit(EXIT_SUCCESS);
 }
 
 int main(int argc, char **argv) {
@@ -83,23 +75,40 @@ int main(int argc, char **argv) {
     struct client_data_listen *cdata = malloc(sizeof(*cdata));
     cdata->sock = s;
 
-    pthread_t client_listen_thread_id;
-    pthread_create(&client_listen_thread_id, NULL, client_listen_thread, cdata);
+    connection = 1;
+
+    pthread_t client_send_thread_id;
+    pthread_create(&client_send_thread_id, NULL, client_send_thread, cdata);
 
     while(1) {
         char buf[BUFSZ];
         memset(buf, 0, BUFSZ);
-        
-        // printf("mensagem> ");
-        fgets(buf, BUFSZ-1, stdin);
-        
-        int count = send(s, buf, strlen(buf) + 1, 0);
-        if (count != strlen(buf) + 1) {
-            close(s);
-            logexit("send");
+        unsigned total = 0;
+        while(1) {
+            int count = recv(s, buf + total, BUFSZ - total, 0);
+            total += count;
+            if (count == 0 || buf[strlen(buf) - 1] == '\n') {
+                // Connection terminated
+                break;
+            }
+            
         }
+        if (total == 0) {
+            printf("Server connection closed\n");
+            connection = 0;
+            close(s);
+            break;
+        }
+
+        // printf("received %u bytes\n", total);
+        printf("%s", buf);
     }
-    // close(s);
+
+    pthread_cancel(client_send_thread_id);
+    pthread_join(client_send_thread_id, NULL);
+
+    if (cdata != NULL)
+        free(cdata);
     
     exit(EXIT_SUCCESS);
 }

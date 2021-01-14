@@ -5,6 +5,7 @@
 
 void tag_list_make_empty_list(tag_list *l) {
     l->start = (tag_cell *) malloc(sizeof(tag_cell));
+    l->start->tag = NULL;
     l->end = l->start;
     l->start->next = NULL;
 }
@@ -16,6 +17,7 @@ int tag_list_is_list_empty(tag_list *l) {
 void tag_list_add_item_start(tag_list *l, char *tag) {
     tag_cell *new_cell;
     new_cell = (tag_cell *) malloc(sizeof(tag_cell));
+    new_cell->tag = NULL;
     
     l->start->tag = (char *) malloc((strlen(tag) + 1)*sizeof(char));
     memcpy(l->start->tag, tag, strlen(tag) + 1);
@@ -59,6 +61,10 @@ int tag_list_remove_item_start(tag_list *l) {
 
     tag_cell *p = l->start;
     l->start = l->start->next;
+    if (p->tag != NULL) {
+        free(p->tag);
+        user_list_free_list(&p->users);
+    }
     free(p);
     return 1;
 }
@@ -125,8 +131,10 @@ void tag_list_free_list(tag_list *l) {
 
     while (p != NULL) {
         l->start = p->next;
-        if (count != 0)
+        if (p->tag != NULL) {
             user_list_free_list(&p->users);
+            free(p->tag);
+        }
         free(p);
         p = l->start;
         count ++;
