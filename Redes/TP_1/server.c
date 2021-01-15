@@ -16,7 +16,6 @@
 
 // Global reference to all the tags created, all threads and kill process
 tag_list all_tags;
-user_list all_threads;
 
 void usage(int argc, char **argv) {
     printf("usage: %s <server port>\n", argv[0]);
@@ -42,8 +41,10 @@ int extract_tags(char *msg, tag_list *list) {
     int start_index = 0, end_index = 0, hadHash = 0, validHash = 0, tag_count = 0;
     for(int i = 0; i < strlen(msg); i++) {
         if (msg[i] == '#' && (i != strlen(msg) - 1 && msg[i + 1] != ' ') && hadHash == 0) {
-            start_index = i;
-            hadHash = 1;
+            if ((i > 0 && msg[i - 1] == ' ') || i == 0) {
+                start_index = i;
+                hadHash = 1;
+            }
         }
         if (hadHash == 1 && ((i != strlen(msg) - 1 && msg[i+1] == ' ') ||  i == strlen(msg) - 1)) {
             validHash = 1;
@@ -248,16 +249,7 @@ void *client_thread(void *data) {
             } else if (status == 4) {
                 printf("[log] Client %s disconnected due to ##kill\n", caddrstr);
                 
-                user_cell *thread = all_threads.start->next;
-                for (user_cell *open_thread = thread; open_thread != NULL; open_thread = open_thread->next) {
-                    if (open_thread->user_id != (int) pthread_self()) {
-                        pthread_cancel(open_thread->user_id);
-                        pthread_join(open_thread->user_id, NULL);
-                    }
-                }
-                user_list_free_list(&all_threads);
                 tag_list_free_list(&all_tags);
-                close(cdata->csock);
                 free(cdata);
                 exit(EXIT_SUCCESS);
             }
@@ -268,7 +260,6 @@ void *client_thread(void *data) {
     close(cdata->csock);
 
     clean_user_tags(cdata->csock);
-    user_list_remove_by_pointer(&all_threads, user_list_find(&all_threads, pthread_self()));
 
     free(cdata);
 
@@ -314,7 +305,6 @@ int main(int argc, char **argv) {
     printf("bound to %s, waiting connections\n", addrstr);
 
     tag_list_make_empty_list(&all_tags);
-    user_list_make_empty_list(&all_threads);
 
     while(1) {
         struct sockaddr_storage cstorage;
@@ -335,7 +325,6 @@ int main(int argc, char **argv) {
 
         pthread_t tid;
         pthread_create(&tid, NULL, client_thread, cdata);
-        user_list_add_item_end(&all_threads, (int)tid);
     }
 
     exit(EXIT_SUCCESS);
