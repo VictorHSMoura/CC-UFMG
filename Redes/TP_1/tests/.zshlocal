@@ -1,0 +1,32 @@
+dir
+vim run-test.sh
+dir
+vim client.py
+dir
+dir
+cd ../
+dir
+chmod 755 run-test.sh client.py
+vim run-test.sh
+dir
+vim run-test.sh
+mv ../server.py .
+chmod 755 server.py
+dir
+./run-test.sh
+tmux
+dir
+./run-test.sh 1
+dir
+vim run-test.sh
+dir
+mv server.py
+mv server.py ..
+rm server.log
+dir
+vim README.md
+dir
+cat run-test.sh
+vim client.py
+dir
+cd ../

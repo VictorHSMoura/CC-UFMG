@@ -110,11 +110,11 @@ int process_msg(int csock, char *msg) {
 
         if(user_list_find(&user_tag_cell->users, csock) != NULL) {
             sprintf(out_msg, "already subscribed +%.488s\n", tag);
-            count = send(csock, out_msg, strlen(out_msg) + 1, 0);
+            count = send(csock, out_msg, strlen(out_msg), 0);
         } else {
             user_list_add_item_end(&user_tag_cell->users, csock);
             sprintf(out_msg, "subscribed +%.488s\n", tag);
-            count = send(csock, out_msg, strlen(out_msg) + 1, 0);
+            count = send(csock, out_msg, strlen(out_msg), 0);
         }
     } else if (msg[0] == '-') {
         char tag[strlen(msg)];
@@ -130,10 +130,10 @@ int process_msg(int csock, char *msg) {
             if(user != NULL) {
                 user_list_remove_by_pointer(&user_tag_cell->users, user);
                 sprintf(out_msg, "unsubscribed +%.488s\n", tag);
-                count = send(csock, out_msg, strlen(out_msg) + 1, 0);
+                count = send(csock, out_msg, strlen(out_msg), 0);
             } else {
                 sprintf(out_msg, "not subscribed +%.488s\n", tag);
-                count = send(csock, out_msg, strlen(out_msg) + 1, 0);
+                count = send(csock, out_msg, strlen(out_msg), 0);
             }
         }
         // sprintf(msg, "unsubscribed -%.488s\n", tag);
@@ -211,35 +211,39 @@ void *client_thread(void *data) {
             buf[strlen(buf) - 1] = '\0';
         }
         
-        int status = process_msg(cdata->csock, buf);
-        
-        if (status == 1) {
-            printf("[log] Client %s disconnected due to invalid character\n", caddrstr);
-            break;
-        } else if (status == 2) {
-            printf("[log] Client %s disconnected due to blank message\n", caddrstr);
-            break;
-        } else if (status == 3) {
-            printf("[log] Client %s disconnected due to oversized message\n", caddrstr);
-            break;
-        } else if (status == 4) {
-            printf("[log] Client %s disconnected due to ##kill\n", caddrstr);
+        char *msg;
+
+        msg = strtok(buf, "\n");
+        while (msg != NULL) {
+            int status = process_msg(cdata->csock, msg);
             
-            user_cell *thread = all_threads.start->next;
-            for (user_cell *open_thread = thread; open_thread != NULL; open_thread = open_thread->next) {
-                if (open_thread->user_id != (int) pthread_self()) {
-                    printf("%d\n", open_thread->user_id);
-                    printf("%d\n", (int) pthread_self());
-                    pthread_cancel(open_thread->user_id);
-                    pthread_join(open_thread->user_id, NULL);
+            if (status == 1) {
+                printf("[log] Client %s disconnected due to invalid character\n", caddrstr);
+                break;
+            } else if (status == 2) {
+                printf("[log] Client %s disconnected due to blank message\n", caddrstr);
+                break;
+            } else if (status == 3) {
+                printf("[log] Client %s disconnected due to oversized message\n", caddrstr);
+                break;
+            } else if (status == 4) {
+                printf("[log] Client %s disconnected due to ##kill\n", caddrstr);
+                
+                user_cell *thread = all_threads.start->next;
+                for (user_cell *open_thread = thread; open_thread != NULL; open_thread = open_thread->next) {
+                    if (open_thread->user_id != (int) pthread_self()) {
+                        pthread_cancel(open_thread->user_id);
+                        pthread_join(open_thread->user_id, NULL);
+                    }
                 }
+                user_list_free_list(&all_threads);
+                tag_list_free_list(&all_tags);
+                close(cdata->csock);
+                free(cdata);
+                exit(EXIT_SUCCESS);
+                // break;
             }
-            user_list_free_list(&all_threads);
-            tag_list_free_list(&all_tags);
-            close(cdata->csock);
-            free(cdata);
-            exit(EXIT_SUCCESS);
-            // break;
+            msg = strtok(NULL, "\n");
         }
     }
 
@@ -313,7 +317,6 @@ int main(int argc, char **argv) {
 
         pthread_t tid;
         pthread_create(&tid, NULL, client_thread, cdata);
-        printf("%lu\n", tid);
         user_list_add_item_end(&all_threads, (int)tid);
     }
 
