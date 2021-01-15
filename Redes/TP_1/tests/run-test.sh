@@ -6,6 +6,7 @@ N=$1
 # Leave server window open during debug (close with C-b :kill-pane)
 # tmux set-window-option remain-on-exit on
 tmux split-pane -v -c $(pwd) ../servidor 51511
+sleep 1s
 ./client.py --script test$N-script.txt
 
 K=1

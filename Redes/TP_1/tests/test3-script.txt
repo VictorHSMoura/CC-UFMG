@@ -1,0 +1,20 @@
+!connect 1 51511 output1.txt
+!sleep 1
+!connect 2 51511 output2.txt
+!sleep 1
+!connect 3 51511 output3.txt
+!sleep 1
+!s1 +dota
+!sleep 1
+!s1 +overwatch
+!sleep 1
+!s2 +overwatch
+!sleep 1
+!s3 +overwatch
+!sleep 1
+!s3 +dota
+!sleep 1
+!s3 mensagem #dota #overwatch
+!sleep 1
+!s3 ##kill
+!sleep 1

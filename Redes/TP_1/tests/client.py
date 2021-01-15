@@ -33,6 +33,11 @@ class Controller:
     RE_SLEEP = re.compile(r"^!sleep (?P<secs>\d+(?:\.\d*)?)$")
     RE_SEND = re.compile(r"^!s(?P<cid>\d+) (?P<msg>.+)$")
 
+    # Sends message together with the next message from cid:
+    RE_JOINSEND = re.compile(r"^!j(?P<cid>\d+) (?P<msg>.+)$")
+    # Sends message in three parts split 0.1s apart:
+    RE_SPLITSEND = re.compile(r"^!t(?P<cid>\d+) (?P<msg>.+)$")
+
     def __init__(self, scriptfn: str):
         self.scriptfd = open(scriptfn, "r")
         self.sockets = [None] * Controller.MAX_CLIENTS
@@ -71,6 +76,28 @@ class Controller:
             self.joinbufs[cid] = ""
             logging.debug("sending [%s]", msg.rstrip())
             self.sockets[cid].send(msg.encode("ascii"))
+        if Controller.RE_JOINSEND.match(line):
+            m = Controller.RE_JOINSEND.match(line)
+            cid = int(m.group("cid"))
+            assert self.sockets[cid] is not None
+            msg = m.group("msg") + "\n"
+            self.joinbufs[cid] += msg
+        if Controller.RE_SPLITSEND.match(line):
+            m = Controller.RE_SPLITSEND.match(line)
+            cid = int(m.group("cid"))
+            assert self.sockets[cid] is not None
+            msg = m.group("msg") + "\n"
+            msg = self.joinbufs[cid] + msg
+            self.joinbufs[cid] = ""
+            length = len(msg)
+            logging.debug("split send [%s]", msg[0:length//3])
+            self.sockets[cid].send(msg[0:length//3].encode("ascii"))
+            time.sleep(0.1)
+            logging.debug("split send [%s]", msg[length//3:(2*length)//3])
+            self.sockets[cid].send(msg[length//3:(2*length)//3].encode("ascii"))
+            time.sleep(0.1)
+            logging.debug("split send [%s]", msg[(2*length)//3:])
+            self.sockets[cid].send(msg[(2*length)//3:].encode("ascii"))
 
     def _dump_messages(self):
         logging.debug("dumping messages")

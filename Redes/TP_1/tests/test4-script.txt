@@ -1,0 +1,14 @@
+!connect 1 51511 output1.txt
+!sleep 1
+!s1 +dota
+!sleep 1
+!t1 +overwatch
+!sleep 1
+!j1 +overwatch
+!sleep 1
+!j1 -overwatch
+!sleep 1
+!j1 -overwatch
+!sleep 1
+!s1 ##kill
+!sleep 1

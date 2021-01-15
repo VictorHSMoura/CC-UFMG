@@ -39,17 +39,19 @@ int check_text_valid(char *msg) {
 }
 
 int extract_tags(char *msg, tag_list *list) {
-    int start_index = 0, end_index = 0, hadHash = 0, tag_count = 0;
+    int start_index = 0, end_index = 0, hadHash = 0, validHash = 0, tag_count = 0;
     for(int i = 0; i < strlen(msg); i++) {
         if (msg[i] == '#' && (i != strlen(msg) - 1 && msg[i + 1] != ' ') && hadHash == 0) {
             start_index = i;
             hadHash = 1;
-        } else if(msg[i] == '#' && hadHash == 1) {
-            hadHash = 0;
         }
-        if (((i != strlen(msg) - 1 && msg[i+1] == ' ') || i == strlen(msg) - 1) && hadHash == 1) {
+        if (hadHash == 1 && ((i != strlen(msg) - 1 && msg[i+1] == ' ') ||  i == strlen(msg) - 1)) {
+            validHash = 1;
+        }
+        if (hadHash == 1 && validHash == 1) {
             end_index = i;
             hadHash = 0;
+            validHash = 0;
             tag_count++;
             int tag_size = end_index - start_index + 1;
             char tag[tag_size];
@@ -129,10 +131,10 @@ int process_msg(int csock, char *msg) {
             user_cell *user = user_list_find(&user_tag_cell->users, csock);
             if(user != NULL) {
                 user_list_remove_by_pointer(&user_tag_cell->users, user);
-                sprintf(out_msg, "unsubscribed +%.488s\n", tag);
+                sprintf(out_msg, "unsubscribed -%.488s\n", tag);
                 count = send(csock, out_msg, strlen(out_msg), 0);
             } else {
-                sprintf(out_msg, "not subscribed +%.488s\n", tag);
+                sprintf(out_msg, "not subscribed -%.488s\n", tag);
                 count = send(csock, out_msg, strlen(out_msg), 0);
             }
         }
@@ -140,6 +142,8 @@ int process_msg(int csock, char *msg) {
     } else {
         tag_list list;
         tag_list_make_empty_list(&list);
+        user_list sent_users;
+        user_list_make_empty_list(&sent_users);
 
         int count_tags = extract_tags(msg, &list);
         for(int i = 0; i < count_tags; i++) {
@@ -150,11 +154,15 @@ int process_msg(int csock, char *msg) {
             if (tag_in_list != NULL) {
                 user_list users = tag_in_list->next->users;
                 user_cell *info = users.start->next;
+
                 while(info != NULL) {
-                    sprintf(out_msg, "[msg] %s\n", msg);
-                    count = send(info->user_id, out_msg, strlen(out_msg) + 1, 0);
-                    if (count != strlen(out_msg) + 1) {
-                        logexit("send");
+                    if(user_list_find(&sent_users, info->user_id) == NULL && info->user_id != csock) {
+                        sprintf(out_msg, "%s\n", msg);
+                        count = send(info->user_id, out_msg, strlen(out_msg), 0);
+                        if (count != strlen(out_msg)) {
+                            logexit("send");
+                        }
+                        user_list_add_item_end(&sent_users, info->user_id);
                     }
                     info = info->next;
                 }
@@ -162,10 +170,11 @@ int process_msg(int csock, char *msg) {
             // remove tag da lista temporária
             tag_list_remove_item_start(&list);
         }
+        user_list_free_list(&sent_users);
         tag_list_free_list(&list);
     }
 
-    printf("[msg] %s\n", msg);
+    printf("[msg] %s\n", out_msg);
     return 0;
 }
 
@@ -205,17 +214,16 @@ void *client_thread(void *data) {
             printf("[log] Connection with %s has been closed on the client side\n", caddrstr);
             break;
         }
-        
-
-        if(buf[strlen(buf) - 1] == '\n') {
-            buf[strlen(buf) - 1] = '\0';
-        }
-        
+        printf("%s", buf);
         char *msg;
 
         msg = strtok(buf, "\n");
         while (msg != NULL) {
-            int status = process_msg(cdata->csock, msg);
+            char formatted_msg[strlen(msg) + 1];
+            memcpy(formatted_msg, msg, strlen(msg));
+            formatted_msg[strlen(msg)] = '\0';
+
+            int status = process_msg(cdata->csock, formatted_msg);
             
             if (status == 1) {
                 printf("[log] Client %s disconnected due to invalid character\n", caddrstr);
