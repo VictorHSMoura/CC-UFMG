@@ -31,7 +31,6 @@ void *client_send_thread(void *data) {
         char buf[BUFSZ];
         memset(buf, 0, BUFSZ);
         
-        // printf("mensagem> ");
         fgets(buf, BUFSZ-1, stdin);
         
         int count = send(cdata->sock, buf, strlen(buf) + 1, 0);
@@ -88,7 +87,6 @@ int main(int argc, char **argv) {
             int count = recv(s, buf + total, BUFSZ - total, 0);
             total += count;
             if (count == 0 || buf[strlen(buf) - 1] == '\n') {
-                // Connection terminated
                 break;
             }
             
@@ -100,7 +98,6 @@ int main(int argc, char **argv) {
             break;
         }
 
-        // printf("received %u bytes\n", total);
         printf("%s", buf);
     }
 

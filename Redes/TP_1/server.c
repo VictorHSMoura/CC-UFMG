@@ -63,7 +63,13 @@ int extract_tags(char *msg, tag_list *list) {
     return tag_count;
 }
 
-// TODO: arrumar forma de fechar sock de mensagem quando necessário
+int valid_tag(char *tag) {
+    for(int i = 0; i < strlen(tag); i++) {
+        if(tag[i] == ' ') return 0;
+    }
+    return 1;
+}
+
 int process_msg(int csock, char *msg) {
     int valid_msg = check_text_valid(msg);
     int count;
@@ -93,52 +99,56 @@ int process_msg(int csock, char *msg) {
     memset(out_msg, 0, BUFSZ);
 
     // tag subscription
-    // TODO: acrescentar tags em lista de tags
     if (msg[0] == '+') {
         char tag[strlen(msg)];
         memcpy(tag, msg + 1, strlen(msg));
         tag[strlen(msg) - 1] = '\0';
 
-        tag_cell *user_tag_cell = tag_list_find(&all_tags, tag);
-        
-        // se a tag não for encontrada na lista, uma nova tag é criada
-        if (user_tag_cell == NULL) {
-            tag_list_add_item_end(&all_tags, tag);
-            user_tag_cell = tag_list_get_last_item(&all_tags);
-        } else {
-            // pointer correction
-            user_tag_cell = user_tag_cell->next;
-        }
+        if (valid_tag(tag)){
+            tag_cell *user_tag_cell = tag_list_find(&all_tags, tag);
+            
+            // se a tag não for encontrada na lista, uma nova tag é criada
+            if (user_tag_cell == NULL) {
+                tag_list_add_item_end(&all_tags, tag);
+                user_tag_cell = tag_list_get_last_item(&all_tags);
+            } else {
+                // pointer correction
+                user_tag_cell = user_tag_cell->next;
+            }
 
-        if(user_list_find(&user_tag_cell->users, csock) != NULL) {
-            sprintf(out_msg, "already subscribed +%.488s\n", tag);
-            count = send(csock, out_msg, strlen(out_msg), 0);
-        } else {
-            user_list_add_item_end(&user_tag_cell->users, csock);
-            sprintf(out_msg, "subscribed +%.488s\n", tag);
-            count = send(csock, out_msg, strlen(out_msg), 0);
+            if(user_list_find(&user_tag_cell->users, csock) != NULL) {
+                sprintf(out_msg, "already subscribed +%.488s\n", tag);
+                count = send(csock, out_msg, strlen(out_msg), 0);
+            } else {
+                user_list_add_item_end(&user_tag_cell->users, csock);
+                sprintf(out_msg, "subscribed +%.488s\n", tag);
+                count = send(csock, out_msg, strlen(out_msg), 0);
+            }
         }
     } else if (msg[0] == '-') {
         char tag[strlen(msg)];
         memcpy(tag, msg + 1, strlen(msg));
+        tag[strlen(msg) - 1] = '\0';
 
-        tag_cell *user_tag_cell = tag_list_find(&all_tags, tag);
-        if (user_tag_cell == NULL) {
-            sprintf(msg, "not subscribed -%.488s\n", tag);
-        } else {
-            // pointer correction
-            user_tag_cell = user_tag_cell->next;
-            user_cell *user = user_list_find(&user_tag_cell->users, csock);
-            if(user != NULL) {
-                user_list_remove_by_pointer(&user_tag_cell->users, user);
-                sprintf(out_msg, "unsubscribed -%.488s\n", tag);
-                count = send(csock, out_msg, strlen(out_msg), 0);
-            } else {
+        if (valid_tag(tag)) {
+            tag_cell *user_tag_cell = tag_list_find(&all_tags, tag);
+            if (user_tag_cell == NULL) {
                 sprintf(out_msg, "not subscribed -%.488s\n", tag);
                 count = send(csock, out_msg, strlen(out_msg), 0);
+            } else {
+                // pointer correction
+                user_tag_cell = user_tag_cell->next;
+                user_cell *user = user_list_find(&user_tag_cell->users, csock);
+                if(user != NULL) {
+                    user_list_remove_by_pointer(&user_tag_cell->users, user);
+                    sprintf(out_msg, "unsubscribed -%.488s\n", tag);
+                    count = send(csock, out_msg, strlen(out_msg), 0);
+                } else {
+                    sprintf(out_msg, "not subscribed -%.488s\n", tag);
+                    count = send(csock, out_msg, strlen(out_msg), 0);
+                }
             }
         }
-        // sprintf(msg, "unsubscribed -%.488s\n", tag);
     } else {
         tag_list list;
         tag_list_make_empty_list(&list);
@@ -156,6 +166,7 @@ int process_msg(int csock, char *msg) {
                 user_cell *info = users.start->next;
 
                 while(info != NULL) {
+                    // previne de enviar a mesma mensagem várias vezes para o usuário, no caso de ele estar inscrito em múltiplas tags da mensagem, e previne de o enviador receber a própria mensagem caso esteja inscrito na tag
                     if(user_list_find(&sent_users, info->user_id) == NULL && info->user_id != csock) {
                         sprintf(out_msg, "%s\n", msg);
                         count = send(info->user_id, out_msg, strlen(out_msg), 0);
@@ -249,7 +260,6 @@ void *client_thread(void *data) {
                 close(cdata->csock);
                 free(cdata);
                 exit(EXIT_SUCCESS);
-                // break;
             }
             msg = strtok(NULL, "\n");
         }
