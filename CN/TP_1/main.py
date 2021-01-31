@@ -1,5 +1,6 @@
 import random
 import math
+import copy
 
 class Node:
     def __init__(self, data):
@@ -65,34 +66,93 @@ class Node:
                         new_expr.append(float(value1) / value2)
         return new_expr[0]
 
+
+
     def map_value_to_param(self, value, params1, params2):
         if value[:2] == 'x1':
             return params1[int(value.split('_')[1]) - 1]
         else:
             return params2[int(value.split('_')[1]) - 1]
 
+# these probabilities can (and probably will) change
+def choose_node(node, instr):
+    if random.random() < 0.2:
+        return node, instr
+    else:
+        if random.random() < 0.5:
+            if node.left is not None:
+                instr.append('l')
+                return choose_node(node.left, instr)
+            elif node.right is not None:
+                instr.append('r')
+                return choose_node(node.right, instr)
+            else:
+                return node, instr
+        else:
+            if node.right is not None:
+                instr.append('r')
+                return choose_node(node.right, instr)
+            elif node.left is not None:
+                instr.append('l')
+                return choose_node(node.left, instr)
+            else:
+                return node, instr
+
+def change_node_by_instructions(original_node, new_node, instr):
+    if instr == []:
+        original_node = new_node  
+    elif instr[0] == 'l':
+        original_node.left = change_node_by_instructions(original_node.left, new_node, instr[1:])
+    else:
+        original_node.right = change_node_by_instructions(original_node.right, new_node, instr[1:])
+    return original_node
+
+def crossover(node1, node2):
+    child1 = copy.deepcopy(node1)
+    child2 = copy.deepcopy(node2)
+
+    print("Tree 1:")
+    child1.PrintTree()
+    print("\n\nTree 2:")
+    child2.PrintTree()
+
+    cross_node_1, instr1 = choose_node(child1, [])
+    cross_node_2, instr2 = choose_node(child2, [])
+
+    child1 = change_node_by_instructions(child1, cross_node_2, instr1)
+    child2 = change_node_by_instructions(child2, cross_node_1, instr2)
+
+
+    print("\n\nAfter crossover:")
+    print("Tree 1:\n")
+    child1.PrintTree()
+    print("\n\nTree 2:\n")
+    child2.PrintTree()
+
 
 if __name__ == "__main__" :
     root = Node('')
     root2 = Node('')
 
-    root.generate_expr(2, 'grow')
+    root.generate_expr(2, 'full')
     root2.generate_expr(2, 'full')
 
-    print("Tree 1:\n")
-    root.PrintTree()
-    print("\n\nTree 2:\n")
-    root2.PrintTree()
+    crossover(root, root2)
 
-    expr = root.unroll_expression([])
-    expr2 = root2.unroll_expression([])
+    # print("Tree 1:\n")
+    # root.PrintTree()
+    # print("\n\nTree 2:\n")
+    # root2.PrintTree()
 
-    print(expr)
-    print(expr2)
+    # expr = root.unroll_expression([])
+    # expr2 = root2.unroll_expression([])
 
-    print(root.eval([1, 2], [3, 4], expr))
-    print(root.eval([3, 1], [2, 4], expr))
+    # print(expr)
+    # print(expr2)
 
-    print(root.eval([1, 2], [3, 4], expr2))
-    print(root.eval([3, 1], [2, 4], expr2))
+    # print(root.eval([1, 2], [3, 4], expr))
+    # print(root.eval([3, 1], [2, 4], expr))
+
+    # print(root.eval([1, 2], [3, 4], expr2))
+    # print(root.eval([3, 1], [2, 4], expr2))
     
