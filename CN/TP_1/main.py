@@ -1,6 +1,7 @@
 import random
 import math
 import copy
+import numpy as np
 
 from node import Node
 from utils import choose_random_element
@@ -160,7 +161,19 @@ def initiate_pop(pop_size, max_depth, func_set, term_set):
             full.generate_expr(size, func_set, term_set, "full")
             pop.append(full)
 
-    return pop
+    return np.array(pop)
+
+def tournament_selection(pop, k):
+    shuffled_pop = copy.deepcopy(pop)
+    np.random.shuffle(shuffled_pop)
+
+    # choose the first k individuals from shuffled population
+    selected = shuffled_pop[:k]
+
+    # TODO: calculate fitness after generating pop to return best individual
+    best = selected[1]
+    return best
+
     
 if __name__ == "__main__" :
     # tests()
@@ -169,3 +182,5 @@ if __name__ == "__main__" :
     term_set = ['x1_1', 'x1_2', 'x2_1', 'x2_2']
 
     pop = initiate_pop(60, 7, func_set, term_set)
+    print(pop)
+    tournament_selection(pop, 3).PrintTree()
