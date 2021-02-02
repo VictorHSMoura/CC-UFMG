@@ -129,6 +129,19 @@ def crossover(node1, node2):
     print("\n\nTree 2:\n")
     child2.PrintTree()
 
+def mutation(node, prob):
+    if random.random() < prob:
+        if node.data in node.func_set:        
+            node.data = node.choose_random_element(node.func_set)
+        elif node.data in node.term_set:
+            node.data = node.choose_random_element(node.term_set)
+    if node.left is not None:
+        node.left = mutation(node.left, prob)
+    if node.right is not None:
+        node.right = mutation(node.right, prob)
+    
+    return node
+
 
 if __name__ == "__main__" :
     root = Node('')
@@ -138,6 +151,11 @@ if __name__ == "__main__" :
     root2.generate_expr(2, 'full')
 
     crossover(root, root2)
+
+    print("\n\nTree 1 before mutation:\n")
+    root.PrintTree()
+    print("\n\nTree 1 after mutation:\n")
+    mutation(root, 0.5).PrintTree()
 
     # print("Tree 1:\n")
     # root.PrintTree()
