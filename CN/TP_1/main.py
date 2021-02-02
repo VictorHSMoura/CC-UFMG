@@ -3,6 +3,17 @@ import math
 import copy
 import numpy as np
 
+# Manipulação dos dados
+import pandas as pd
+
+# Métrica v_measure_score
+from sklearn.metrics.cluster import v_measure_score
+
+# Funções para clustering utilizando PyClustering
+from pyclustering.cluster.kmeans import kmeans
+from pyclustering.cluster.center_initializer import kmeans_plusplus_initializer
+from pyclustering.utils.metric import distance_metric, type_metric
+
 from node import Node
 from utils import choose_random_element
 
@@ -163,6 +174,7 @@ def initiate_pop(pop_size, max_depth, func_set, term_set):
 
     return np.array(pop)
 
+# TODO: include all_data variable here
 def tournament_selection(pop, k):
     shuffled_pop = copy.deepcopy(pop)
     np.random.shuffle(shuffled_pop)
@@ -170,10 +182,44 @@ def tournament_selection(pop, k):
     # choose the first k individuals from shuffled population
     selected = shuffled_pop[:k]
 
+    # TODO: commented because I need to include a fitness variable on individuals
+    # max_value = selected[0].fitness
+    # max_ind = selected[0]
+    # for i in range(k):
+    #     if selected[i].fitness > max_value:
+    #         max_value = selected[i].fitness
+    #         max_ind = selected[i]
+
+    # best = max_ind
     # TODO: calculate fitness after generating pop to return best individual
     best = selected[1]
     return best
 
+# TODO: test function and correct bugs
+def calculate_fitness(ind, all_data, func_set, number_of_clusters):
+    ind_exp = ind.unroll_expression([])
+
+    def fitness_distance(data1, data2):
+        """
+        input:
+            point1 e point2 = pontos utilizados no cálculo da distância
+        output:
+            result = distância entre os dois pontos
+        """
+        result = eval(data1, data2, func_set, ind_exp)
+        return result
+    
+    # distance function
+    fitness_metric = distance_metric(type_metric.USER_DEFINED, func=fitness_distance)
+
+    k = number_of_clusters
+
+    initial_centers = kmeans_plusplus_initializer(all_data, k).initialize()
+    kmeans_instance = kmeans(all_data, initial_centers, metric=fitness_metric)
+    kmeans_instance.process()
+    clusters = kmeans_instance.get_clusters()
+
+    # TODO: evaluate the kmeans with the V measure
     
 if __name__ == "__main__" :
     # tests()
