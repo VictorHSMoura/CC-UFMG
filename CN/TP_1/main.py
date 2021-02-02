@@ -2,77 +2,40 @@ import random
 import math
 import copy
 
-class Node:
-    def __init__(self, data):
-        self.left = None
-        self.right = None
-        self.data = data
-        self.func_set = ['+', '-', '*', '/']
-        self.term_set = ['x1_1', 'x1_2', 'x2_1', 'x2_2']
+from node import Node
+from utils import choose_random_element
 
-    def generate_expr(self, depth, method):
-        if depth == 0 or (method == "grow" and random.random() < float(len(self.term_set))/(len(self.term_set) + len(self.func_set))):
-            self.data = self.choose_random_element(self.term_set)
+
+def map_value_to_param(value, params1, params2):
+    if value[:2] == 'x1':
+        return params1[int(value.split('_')[1]) - 1]
+    else:
+        return params2[int(value.split('_')[1]) - 1]
+
+def eval(params1, params2, func_set, expr_list):
+    reverse_expr = expr_list[::-1]
+    new_expr = []
+    for elem in reverse_expr:
+        if elem not in func_set:
+            value = map_value_to_param(elem, params1, params2)
+            new_expr.append(value)
         else:
-            self.data = self.choose_random_element(self.func_set)
+            value1 = new_expr.pop()
 
-            self.left = Node('')
-            self.left.generate_expr(depth - 1, method)
-
-            self.right = Node('')
-            self.right.generate_expr(depth - 1, method)
-
-    def choose_random_element(self, chosen_set):
-        index = math.floor(random.random() * len(chosen_set))
-        return chosen_set[index]
-
-    def PrintTree(self):
-        if self.left:
-            self.left.PrintTree()
-        print( self.data),
-        if self.right:
-            self.right.PrintTree()
-
-    def unroll_expression(self, expr_list):
-        expr_list.append(self.data)
-        if self.left is not None:
-            expr_list = self.left.unroll_expression(expr_list)
-        if self.right is not None:
-            expr_list = self.right.unroll_expression(expr_list)
-        return expr_list
-
-    def eval(self, params1, params2, expr_list):
-        reverse_expr = expr_list[::-1]
-        new_expr = []
-        for elem in reverse_expr:
-            if elem not in self.func_set:
-                value = self.map_value_to_param(elem, params1, params2)
-                new_expr.append(value)
+            value2 = new_expr.pop()
+            
+            if elem == '+':
+                new_expr.append(value1 + value2)
+            elif elem == '-':
+                new_expr.append(value1 - value2)
+            elif elem == '*':
+                new_expr.append(value1 * value2)
             else:
-                value1 = new_expr.pop()
-
-                value2 = new_expr.pop()
-                
-                if elem == '+':
-                    new_expr.append(value1 + value2)
-                elif elem == '-':
-                    new_expr.append(value1 - value2)
-                elif elem == '*':
-                    new_expr.append(value1 * value2)
+                if value2 == 0:
+                    new_expr.append(1)
                 else:
-                    if value2 == 0:
-                        new_expr.append(1)
-                    else:
-                        new_expr.append(float(value1) / value2)
-        return new_expr[0]
-
-
-
-    def map_value_to_param(self, value, params1, params2):
-        if value[:2] == 'x1':
-            return params1[int(value.split('_')[1]) - 1]
-        else:
-            return params2[int(value.split('_')[1]) - 1]
+                    new_expr.append(float(value1) / value2)
+    return new_expr[0]
 
 # these probabilities can (and probably will) change
 def choose_node(node, instr):
@@ -129,16 +92,18 @@ def crossover(node1, node2):
     print("\n\nTree 2:\n")
     child2.PrintTree()
 
-def mutation(node, prob):
+    return child1, child2
+
+def mutation(node, func_set, term_set, prob):
     if random.random() < prob:
-        if node.data in node.func_set:        
-            node.data = node.choose_random_element(node.func_set)
-        elif node.data in node.term_set:
-            node.data = node.choose_random_element(node.term_set)
+        if node.data in func_set:        
+            node.data = choose_random_element(func_set)
+        elif node.data in term_set:
+            node.data = choose_random_element(term_set)
     if node.left is not None:
-        node.left = mutation(node.left, prob)
+        node.left = mutation(node.left, func_set, term_set, prob)
     if node.right is not None:
-        node.right = mutation(node.right, prob)
+        node.right = mutation(node.right, func_set, term_set, prob)
     
     return node
 
@@ -147,15 +112,18 @@ if __name__ == "__main__" :
     root = Node('')
     root2 = Node('')
 
-    root.generate_expr(2, 'full')
-    root2.generate_expr(2, 'full')
+    func_set = ['+', '-', '*', '/']
+    term_set = ['x1_1', 'x1_2', 'x2_1', 'x2_2']
 
-    crossover(root, root2)
+    root.generate_expr(2, func_set, term_set, 'full')
+    root2.generate_expr(2, func_set, term_set, 'full')
+
+    child1, child2 = crossover(root, root2)
 
     print("\n\nTree 1 before mutation:\n")
     root.PrintTree()
     print("\n\nTree 1 after mutation:\n")
-    mutation(root, 0.5).PrintTree()
+    mutation(root, func_set, term_set, 0.5).PrintTree()
 
     # print("Tree 1:\n")
     # root.PrintTree()
