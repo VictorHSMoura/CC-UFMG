@@ -108,7 +108,7 @@ def mutation(node, func_set, term_set, prob):
     return node
 
 
-if __name__ == "__main__" :
+def tests():
     root = Node('')
     root2 = Node('')
 
@@ -141,4 +141,31 @@ if __name__ == "__main__" :
 
     # print(root.eval([1, 2], [3, 4], expr2))
     # print(root.eval([3, 1], [2, 4], expr2))
+
+# initiate population using the method "ramped half-and-half"
+def initiate_pop(pop_size, max_depth, func_set, term_set):
+    sizes = range(2, max_depth + 1)
+    ind_per_depth = int(pop_size/len(sizes))
+    pop = []
+
+    print(ind_per_depth)
+
+    for size in sizes:
+        for _ in range(int(ind_per_depth/2)):
+            grow = Node('')
+            grow.generate_expr(size, func_set, term_set, "grow")
+            pop.append(grow)
+
+            full = Node('')
+            full.generate_expr(size, func_set, term_set, "full")
+            pop.append(full)
+
+    return pop
     
+if __name__ == "__main__" :
+    # tests()
+
+    func_set = ['+', '-', '*', '/']
+    term_set = ['x1_1', 'x1_2', 'x2_1', 'x2_2']
+
+    pop = initiate_pop(60, 7, func_set, term_set)
