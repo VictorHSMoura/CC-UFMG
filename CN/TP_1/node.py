@@ -8,6 +8,7 @@ class Node:
         self.left = None
         self.right = None
         self.data = data
+        self.fitness = None
 
     def generate_expr(self, depth, func_set, term_set, method):
         if depth == 0 or (method == "grow" and random.random() < float(len(term_set))/(len(term_set) + len(func_set))):

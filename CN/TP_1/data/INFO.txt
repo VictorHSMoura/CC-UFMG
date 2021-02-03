@@ -1,0 +1,2 @@
+Breast Cancer Coimbra - http://archive.ics.uci.edu/ml/datasets/Breast+Cancer+Coimbra
+Glasse - https://archive.ics.uci.edu/ml/datasets/glass+identification

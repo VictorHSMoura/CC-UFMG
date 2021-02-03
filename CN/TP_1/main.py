@@ -2,6 +2,7 @@ import random
 import math
 import copy
 import numpy as np
+import sys
 
 # Manipulação dos dados
 import pandas as pd
@@ -183,21 +184,20 @@ def tournament_selection(pop, k):
     selected = shuffled_pop[:k]
 
     # TODO: commented because I need to include a fitness variable on individuals
-    # max_value = selected[0].fitness
-    # max_ind = selected[0]
-    # for i in range(k):
-    #     if selected[i].fitness > max_value:
-    #         max_value = selected[i].fitness
-    #         max_ind = selected[i]
+    max_value = selected[0].fitness
+    max_ind = selected[0]
+    for i in range(k):
+        if selected[i].fitness > max_value:
+            max_value = selected[i].fitness
+            max_ind = selected[i]
 
-    # best = max_ind
-    # TODO: calculate fitness after generating pop to return best individual
-    best = selected[1]
+    best = max_ind
+
     return best
 
-# TODO: test function and correct bugs
-def calculate_fitness(ind, all_data, func_set, number_of_clusters):
+def calculate_fitness(ind, df, X, target, func_set, number_of_clusters):
     ind_exp = ind.unroll_expression([])
+    df_copy = copy.deepcopy(df)
 
     def fitness_distance(data1, data2):
         """
@@ -214,19 +214,40 @@ def calculate_fitness(ind, all_data, func_set, number_of_clusters):
 
     k = number_of_clusters
 
-    initial_centers = kmeans_plusplus_initializer(all_data, k).initialize()
-    kmeans_instance = kmeans(all_data, initial_centers, metric=fitness_metric)
+    initial_centers = kmeans_plusplus_initializer(X, k).initialize()
+    kmeans_instance = kmeans(X, initial_centers, metric=fitness_metric)
     kmeans_instance.process()
     clusters = kmeans_instance.get_clusters()
 
-    # TODO: evaluate the kmeans with the V measure
+    for i in range(len(clusters)):
+        df_copy.loc[clusters[i], 'y_pred'] = i
+
+    return v_measure_score(target, df_copy.y_pred)
     
+def read_data(file_name, drop_column):
+    # read data from csv
+    df = pd.read_csv(file_name)
+    # drop categories column
+    X = df.drop([drop_column], axis=1)
+
+    return df, X
+
 if __name__ == "__main__" :
     # tests()
 
+    # set functions and terminals
     func_set = ['+', '-', '*', '/']
-    term_set = ['x1_1', 'x1_2', 'x2_1', 'x2_2']
+    term_set = ['x1_1', 'x1_2', 'x1_3', 'x1_4', 'x1_5', 'x1_6', 'x1_7', 'x1_8', 'x1_9','x2_1', 'x2_2', 'x2_3', 'x2_4', 'x2_5', 'x2_6', 'x2_7', 'x2_8', 'x2_9']
+
+    
+    df, X = read_data('data/breast_cancer_coimbra_train.csv', 'Classification')
 
     pop = initiate_pop(60, 7, func_set, term_set)
     print(pop)
-    tournament_selection(pop, 3).PrintTree()
+
+    for ind in pop:
+        ind.fitness = calculate_fitness(ind, df, X, df.Classification, func_set, 2)
+    
+    ind = tournament_selection(pop, 3)
+    ind.PrintTree()
+    print(ind.fitness)
