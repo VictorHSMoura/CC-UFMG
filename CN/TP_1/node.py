@@ -30,9 +30,11 @@ class Node:
             expr_list = self.right.unroll_expression(expr_list)
         return expr_list
 
-    def PrintTree(self):
+    def PrintTree(self, origin=True):
         if self.left:
-            self.left.PrintTree()
-        print( self.data),
+            self.left.PrintTree(False)
+        print(self.data, end=' ')
         if self.right:
-            self.right.PrintTree()
+            self.right.PrintTree(False)
+        if origin:
+            print('\n', end='')

@@ -85,12 +85,7 @@ def change_node_by_instructions(original_node, new_node, instr):
 
 def crossover(node1, node2):
     child1 = copy.deepcopy(node1)
-    child2 = copy.deepcopy(node2)
-
-    print("Tree 1:")
-    child1.PrintTree()
-    print("\n\nTree 2:")
-    child2.PrintTree()
+    child2 = copy.deepcopy(node2)  
 
     cross_node_1, instr1 = choose_node(child1, [])
     cross_node_2, instr2 = choose_node(child2, [])
@@ -98,27 +93,34 @@ def crossover(node1, node2):
     child1 = change_node_by_instructions(child1, cross_node_2, instr1)
     child2 = change_node_by_instructions(child2, cross_node_1, instr2)
 
-
-    print("\n\nAfter crossover:")
-    print("Tree 1:\n")
-    child1.PrintTree()
-    print("\n\nTree 2:\n")
-    child2.PrintTree()
-
     return child1, child2
 
-def mutation(node, func_set, term_set, prob):
-    if random.random() < prob:
-        if node.data in func_set:        
-            node.data = choose_random_element(func_set)
-        elif node.data in term_set:
-            node.data = choose_random_element(term_set)
-    if node.left is not None:
-        node.left = mutation(node.left, func_set, term_set, prob)
-    if node.right is not None:
-        node.right = mutation(node.right, func_set, term_set, prob)
+def mutation(node, func_set, term_set, mutated=False):
+    mut_prob = 0.25
+    if mutated:
+        return node, mutated
+    else:
+        if random.random() < mut_prob:
+            if node.data in func_set:
+                elem = node.data
+                while elem == node.data:
+                    elem = choose_random_element(func_set)
+                
+                node.data = elem
+            elif node.data in term_set:
+                elem = node.data
+                while elem == node.data:
+                    elem = choose_random_element(term_set)
+                
+                node.data = elem
+            return node, True
+        else:
+            if node.left is not None and not mutated:
+                node.left, mutated = mutation(node.left, func_set, term_set, mutated)
+            if node.right is not None and not mutated:
+                node.right, mutated = mutation(node.right, func_set, term_set, mutated)
     
-    return node
+    return node, mutated
 
 
 def tests():
@@ -136,7 +138,8 @@ def tests():
     print("\n\nTree 1 before mutation:\n")
     root.PrintTree()
     print("\n\nTree 1 after mutation:\n")
-    mutation(root, func_set, term_set, 0.5).PrintTree()
+    node_mutated, _ = mutation(root, func_set, term_set)
+    node_mutated.PrintTree()
 
     # print("Tree 1:\n")
     # root.PrintTree()
@@ -161,8 +164,6 @@ def initiate_pop(pop_size, max_depth, func_set, term_set):
     ind_per_depth = int(pop_size/len(sizes))
     pop = []
 
-    print(ind_per_depth)
-
     for size in sizes:
         for _ in range(int(ind_per_depth/2)):
             grow = Node('')
@@ -175,25 +176,29 @@ def initiate_pop(pop_size, max_depth, func_set, term_set):
 
     return np.array(pop)
 
-# TODO: include all_data variable here
-def tournament_selection(pop, k):
-    shuffled_pop = copy.deepcopy(pop)
-    np.random.shuffle(shuffled_pop)
-
-    # choose the first k individuals from shuffled population
-    selected = shuffled_pop[:k]
-
-    # TODO: commented because I need to include a fitness variable on individuals
+def select_max(selected):
     max_value = selected[0].fitness
     max_ind = selected[0]
-    for i in range(k):
+    for i in range(len(selected)):
         if selected[i].fitness > max_value:
             max_value = selected[i].fitness
             max_ind = selected[i]
 
-    best = max_ind
+    return max_ind
 
-    return best
+def tournament_selection(pop, k, n_ind):
+    shuffled_pop = copy.deepcopy(pop)
+    np.random.shuffle(shuffled_pop)
+
+    # choose the best individual among the k initial individuals from shuffled population
+    best1 = select_max(shuffled_pop[:k])
+
+    # if we need to select two individuals, the same rule above is applied, just choosing between the last k individuals from shuffled population
+    best2 = None
+    if n_ind == 2:
+        best2 = select_max(shuffled_pop[-k:])
+
+    return best1, best2
 
 def calculate_fitness(ind, df, X, target, func_set, number_of_clusters):
     ind_exp = ind.unroll_expression([])
@@ -239,15 +244,52 @@ if __name__ == "__main__" :
     func_set = ['+', '-', '*', '/']
     term_set = ['x1_1', 'x1_2', 'x1_3', 'x1_4', 'x1_5', 'x1_6', 'x1_7', 'x1_8', 'x1_9','x2_1', 'x2_2', 'x2_3', 'x2_4', 'x2_5', 'x2_6', 'x2_7', 'x2_8', 'x2_9']
 
+    prob_crossover = 0.9
+    prob_mutation = 0.05
     
     df, X = read_data('data/breast_cancer_coimbra_train.csv', 'Classification')
 
+    #TODO: create a function that receives the probs and number of generations, and run all the generations
+
     pop = initiate_pop(60, 7, func_set, term_set)
-    print(pop)
 
     for ind in pop:
         ind.fitness = calculate_fitness(ind, df, X, df.Classification, func_set, 2)
     
-    ind = tournament_selection(pop, 3)
-    ind.PrintTree()
-    print(ind.fitness)
+    #TODO: remove parents from population and add children to it
+    gen_prob = random.random()
+    if gen_prob < prob_crossover:
+        print('Crossover:\n')
+        
+        parent1, parent2 = tournament_selection(pop, 3, 2)
+        print('Parent 1:')
+        parent1.PrintTree()
+        print('\nParent 2:')
+        parent2.PrintTree()
+
+        child1, child2 = crossover(parent1, parent2)
+        print('\n\nChild 1:')
+        child1.PrintTree()
+        print('\nChild 2:')
+        child2.PrintTree()
+
+    elif gen_prob < prob_crossover + prob_mutation:
+        print('Mutation:\n')
+
+        parent, _ = tournament_selection(pop, 3, 1)
+        print('Parent :')
+        parent.PrintTree()
+
+        child, _ = mutation(parent, func_set, term_set)
+        print('Child :')
+        child.PrintTree()
+    else:
+        print('Reproduction:\n')
+
+        parent, _ = tournament_selection(pop, 3, 1)
+        print('Parent :')
+        parent.PrintTree()
+
+        child = copy.deepcopy(parent)
+        print('Child :')
+        child.PrintTree()
