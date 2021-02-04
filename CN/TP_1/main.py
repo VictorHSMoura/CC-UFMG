@@ -122,42 +122,6 @@ def mutation(node, func_set, term_set, mutated=False):
     
     return node, mutated
 
-
-def tests():
-    root = Node('')
-    root2 = Node('')
-
-    func_set = ['+', '-', '*', '/']
-    term_set = ['x1_1', 'x1_2', 'x2_1', 'x2_2']
-
-    root.generate_expr(2, func_set, term_set, 'full')
-    root2.generate_expr(2, func_set, term_set, 'full')
-
-    child1, child2 = crossover(root, root2)
-
-    print("\n\nTree 1 before mutation:\n")
-    root.PrintTree()
-    print("\n\nTree 1 after mutation:\n")
-    node_mutated, _ = mutation(root, func_set, term_set)
-    node_mutated.PrintTree()
-
-    # print("Tree 1:\n")
-    # root.PrintTree()
-    # print("\n\nTree 2:\n")
-    # root2.PrintTree()
-
-    # expr = root.unroll_expression([])
-    # expr2 = root2.unroll_expression([])
-
-    # print(expr)
-    # print(expr2)
-
-    # print(root.eval([1, 2], [3, 4], expr))
-    # print(root.eval([3, 1], [2, 4], expr))
-
-    # print(root.eval([1, 2], [3, 4], expr2))
-    # print(root.eval([3, 1], [2, 4], expr2))
-
 # initiate population using the method "ramped half-and-half"
 def initiate_pop(pop_size, max_depth, func_set, term_set):
     sizes = range(2, max_depth + 1)
@@ -237,31 +201,33 @@ def read_data(file_name, drop_column):
 
     return df, X
 
-if __name__ == "__main__" :
-    # tests()
-
+def run_for_database(file_name, prob_crossover, prob_mutation, tour_size, pop_size, n_gen):
     # set functions and terminals
     func_set = ['+', '-', '*', '/']
     term_set = ['x1_1', 'x1_2', 'x1_3', 'x1_4', 'x1_5', 'x1_6', 'x1_7', 'x1_8', 'x1_9','x2_1', 'x2_2', 'x2_3', 'x2_4', 'x2_5', 'x2_6', 'x2_7', 'x2_8', 'x2_9']
 
-    prob_crossover = 0.9
-    prob_mutation = 0.05
+    tree_max_depth = 7
+
+    if file_name == 'data/breast_cancer_coimbra_train.csv':
+        labels_column = 'Classification'
+        n_clusters = 2
+    else:
+        labels_column = 'glass_type'
+        n_clusters = 7
     
-    df, X = read_data('data/breast_cancer_coimbra_train.csv', 'Classification')
+    df, X = read_data(file_name, labels_column)
 
-    #TODO: create a function that receives the probs and number of generations, and run all the generations
-
-    pop = initiate_pop(60, 7, func_set, term_set)
+    pop = initiate_pop(pop_size, tree_max_depth, func_set, term_set)
 
     for ind in pop:
-        ind.fitness = calculate_fitness(ind, df, X, df.Classification, func_set, 2)
-    
+        ind.fitness = calculate_fitness(ind, df, X, df[labels_column], func_set, n_clusters)
+
     #TODO: remove parents from population and add children to it
     gen_prob = random.random()
     if gen_prob < prob_crossover:
         print('Crossover:\n')
         
-        parent1, parent2 = tournament_selection(pop, 3, 2)
+        parent1, parent2 = tournament_selection(pop, tour_size, 2)
         print('Parent 1:')
         parent1.PrintTree()
         print('\nParent 2:')
@@ -276,7 +242,7 @@ if __name__ == "__main__" :
     elif gen_prob < prob_crossover + prob_mutation:
         print('Mutation:\n')
 
-        parent, _ = tournament_selection(pop, 3, 1)
+        parent, _ = tournament_selection(pop, tour_size, 1)
         print('Parent :')
         parent.PrintTree()
 
@@ -286,10 +252,18 @@ if __name__ == "__main__" :
     else:
         print('Reproduction:\n')
 
-        parent, _ = tournament_selection(pop, 3, 1)
+        parent, _ = tournament_selection(pop, tour_size, 1)
         print('Parent :')
         parent.PrintTree()
 
         child = copy.deepcopy(parent)
         print('Child :')
         child.PrintTree()
+    
+
+if __name__ == "__main__" :
+    # tests()
+
+    run_for_database(file_name='data/breast_cancer_coimbra_train.csv', prob_crossover=0.9, prob_mutation=0.05, tour_size=3, pop_size=60, n_gen=100)
+
+    # run_for_database(file_name='data/glass_train.csv', prob_crossover=0.9, prob_mutation=0.05, tour_size=3, pop_size=60, n_gen=100)
