@@ -140,29 +140,38 @@ def initiate_pop(pop_size, max_depth, func_set, term_set):
 
     return np.array(pop)
 
-def select_max(selected):
-    max_value = selected[0].fitness
-    max_ind = selected[0]
-    for i in range(len(selected)):
-        if selected[i].fitness > max_value:
-            max_value = selected[i].fitness
-            max_ind = selected[i]
+def select_max(pop, indexes):
+    copy_pop = copy.deepcopy(pop)
+    
+    max_value = copy_pop[indexes[0]].fitness
+    max_index = indexes[0]
+    for i in range(len(indexes)):
+        if copy_pop[indexes[i]].fitness > max_value:
+            max_value = copy_pop[indexes[i]].fitness
+            max_index = indexes[i]
 
-    return max_ind
+    return pop[max_index], max_index
 
 def tournament_selection(pop, k, n_ind):
-    shuffled_pop = copy.deepcopy(pop)
-    np.random.shuffle(shuffled_pop)
+    # shuffled_pop = copy.deepcopy(pop)
+    # np.random.shuffle(shuffled_pop)
+    
+    ind_index = np.arange(pop.shape[0])
+    np.random.shuffle(ind_index)
+
 
     # choose the best individual among the k initial individuals from shuffled population
-    best1 = select_max(shuffled_pop[:k])
+    best1, index1 = select_max(pop, ind_index[:k])
 
     # if we need to select two individuals, the same rule above is applied, just choosing between the last k individuals from shuffled population
     best2 = None
+    index2 = index1
     if n_ind == 2:
-        best2 = select_max(shuffled_pop[-k:])
+        while index2 == index1:
+            np.random.shuffle(ind_index)
+            best2, index2 = select_max(pop, ind_index[:k])
 
-    return best1, best2
+    return best1, index1, best2, index2
 
 def calculate_fitness(ind, df, X, target, func_set, number_of_clusters):
     ind_exp = ind.unroll_expression([])
@@ -201,6 +210,38 @@ def read_data(file_name, drop_column):
 
     return df, X
 
+def update_pop(pop, parents, indexes, children, best_fitness):
+    # check if one child is the best individual right now
+    for child in children:
+        if child.fitness > best_fitness:
+            best_fitness = child.fitness
+
+    # check if one parent is the best individual right now
+    # if it is, delete the other parent and add a random child to pop
+    for i in range(len(parents)):
+        if parents[i].fitness == best_fitness:
+            pop = np.delete(pop, indexes)
+            random_child = random.randint(0, len(children)-1)
+            pop = np.append(pop, parents[i])
+            pop = np.append(pop, children[random_child])
+            return pop, best_fitness
+    
+    pop = np.delete(pop, indexes)
+    pop = np.append(pop, child)
+    return pop, best_fitness
+            
+
+def compare_pop(old_pop, new_pop):
+    for ind in old_pop:
+        found = False
+        for new_ind in new_pop:
+            if(new_ind.unroll_expression([]) == ind.unroll_expression([])):
+                found = True
+                break
+        if not found:
+            print("Not Found:")
+            ind.PrintTree()
+
 def run_for_database(file_name, prob_crossover, prob_mutation, tour_size, pop_size, n_gen):
     # set functions and terminals
     func_set = ['+', '-', '*', '/']
@@ -219,15 +260,18 @@ def run_for_database(file_name, prob_crossover, prob_mutation, tour_size, pop_si
 
     pop = initiate_pop(pop_size, tree_max_depth, func_set, term_set)
 
+    best_fitness = 0
     for ind in pop:
         ind.fitness = calculate_fitness(ind, df, X, df[labels_column], func_set, n_clusters)
+        if ind.fitness > best_fitness:
+            best_fitness = ind.fitness
 
     #TODO: remove parents from population and add children to it
     gen_prob = random.random()
     if gen_prob < prob_crossover:
         print('Crossover:\n')
         
-        parent1, parent2 = tournament_selection(pop, tour_size, 2)
+        parent1, i1, parent2, i2 = tournament_selection(pop, tour_size, 2)
         print('Parent 1:')
         parent1.PrintTree()
         print('\nParent 2:')
@@ -239,31 +283,75 @@ def run_for_database(file_name, prob_crossover, prob_mutation, tour_size, pop_si
         print('\nChild 2:')
         child2.PrintTree()
 
+        child1.fitness = calculate_fitness(child1, df, X, df[labels_column], func_set, n_clusters)
+        child2.fitness = calculate_fitness(child1, df, X, df[labels_column], func_set, n_clusters)
+
+        parents = [parent1, parent2]
+        indexes = [i1, i2]
+        children = [child1, child2]
+
+        old_pop = copy.deepcopy(pop)
+        pop, best_fitness = update_pop(pop, parents, indexes, children, best_fitness)
+
+        compare_pop(old_pop, pop)
+
     elif gen_prob < prob_crossover + prob_mutation:
         print('Mutation:\n')
 
-        parent, _ = tournament_selection(pop, tour_size, 1)
+        parent, i, _, _ = tournament_selection(pop, tour_size, 1)
         print('Parent :')
         parent.PrintTree()
 
         child, _ = mutation(parent, func_set, term_set)
         print('Child :')
         child.PrintTree()
+
+        parents = [parent]
+        indexes = [i]
+        children = [child]
+
+        old_pop = copy.deepcopy(pop)
+        pop, best_fitness = update_pop(pop, parents, indexes, children, best_fitness)
+
+        compare_pop(old_pop, pop)
     else:
         print('Reproduction:\n')
 
-        parent, _ = tournament_selection(pop, tour_size, 1)
+        parent, i, _, _ = tournament_selection(pop, tour_size, 1)
         print('Parent :')
         parent.PrintTree()
 
         child = copy.deepcopy(parent)
         print('Child :')
         child.PrintTree()
+
+        parents = [parent]
+        indexes = [i]
+        children = [child]
+
+        old_pop = copy.deepcopy(pop)
+        pop, best_fitness = update_pop(pop, parents, indexes, children, best_fitness)
+
+        compare_pop(old_pop, pop)
     
 
 if __name__ == "__main__" :
-    # tests()
-
     run_for_database(file_name='data/breast_cancer_coimbra_train.csv', prob_crossover=0.9, prob_mutation=0.05, tour_size=3, pop_size=60, n_gen=100)
 
     # run_for_database(file_name='data/glass_train.csv', prob_crossover=0.9, prob_mutation=0.05, tour_size=3, pop_size=60, n_gen=100)
+
+    # pop = []
+
+    # func_set = ['+', '-', '*', '/']
+    # term_set = ['x1_1', 'x1_2', 'x1_3', 'x1_4', 'x1_5', 'x1_6', 'x1_7', 'x1_8', 'x1_9','x2_1', 'x2_2', 'x2_3', 'x2_4', 'x2_5', 'x2_6', 'x2_7', 'x2_8', 'x2_9']
+
+    # for i in range(3):
+    #     full = Node('')
+    #     full.generate_expr(5, func_set, term_set, "full")
+    #     pop.append(full)
+
+    # pop = np.array(pop)
+
+    # ind = pop[0]
+
+    # print(np.where(pop == ind)[0])
