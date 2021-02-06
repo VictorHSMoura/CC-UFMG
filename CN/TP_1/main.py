@@ -74,53 +74,67 @@ def choose_node(node, instr):
             else:
                 return node, instr
 
-def change_node_by_instructions(original_node, new_node, instr):
+def swap_node_by_instructions(original_node, new_node, instr):
     if instr == []:
         original_node = new_node  
     elif instr[0] == 'l':
-        original_node.left = change_node_by_instructions(original_node.left, new_node, instr[1:])
+        original_node.left = swap_node_by_instructions(original_node.left, new_node, instr[1:])
     else:
-        original_node.right = change_node_by_instructions(original_node.right, new_node, instr[1:])
+        original_node.right = swap_node_by_instructions(original_node.right, new_node, instr[1:])
     return original_node
 
-def crossover(node1, node2):
-    child1 = copy.deepcopy(node1)
-    child2 = copy.deepcopy(node2)  
+def change_node_by_instructions(original_node, new_node_data, instr):
+    if instr == []:
+        original_node.data = new_node_data
+    elif instr[0] == 'l':
+        original_node.left = change_node_by_instructions(original_node.left, new_node_data, instr[1:])
+    else:
+        original_node.right = change_node_by_instructions(original_node.right, new_node_data, instr[1:])
+    return original_node
 
-    cross_node_1, instr1 = choose_node(child1, [])
-    cross_node_2, instr2 = choose_node(child2, [])
+def crossover(node1, node2, max_depth):
+    depth1 = max_depth + 1
+    depth2 = max_depth + 1
 
-    child1 = change_node_by_instructions(child1, cross_node_2, instr1)
-    child2 = change_node_by_instructions(child2, cross_node_1, instr2)
+    # prevent generating too big children
+    while depth1 > max_depth or depth2 > max_depth:
+        child1 = copy.deepcopy(node1)
+        child2 = copy.deepcopy(node2)  
+
+        cross_node_1, instr1 = choose_node(child1, [])
+        cross_node_2, instr2 = choose_node(child2, [])
+
+        child1 = swap_node_by_instructions(child1, cross_node_2, instr1)
+        child2 = swap_node_by_instructions(child2, cross_node_1, instr2)
+
+        depth1 = child1.get_depth() - 1
+        depth2 = child2.get_depth() - 1
+
+    # reset fitness
+    child1.fitness = None
+    child2.fitness = None
 
     return child1, child2
 
-def mutation(node, func_set, term_set, mutated=False):
-    mut_prob = 0.25
-    if mutated:
-        return node, mutated
+def mutation(node, func_set, term_set):
+    child = copy.deepcopy(node)
+
+    mutated_node, instr = choose_node(child, [])
+
+    new_data = mutated_node.data
+    if mutated_node.data in func_set:
+        while mutated_node.data == new_data:
+            new_data = choose_random_element(func_set)
     else:
-        if random.random() < mut_prob:
-            if node.data in func_set:
-                elem = node.data
-                while elem == node.data:
-                    elem = choose_random_element(func_set)
-                
-                node.data = elem
-            elif node.data in term_set:
-                elem = node.data
-                while elem == node.data:
-                    elem = choose_random_element(term_set)
-                
-                node.data = elem
-            return node, True
-        else:
-            if node.left is not None and not mutated:
-                node.left, mutated = mutation(node.left, func_set, term_set, mutated)
-            if node.right is not None and not mutated:
-                node.right, mutated = mutation(node.right, func_set, term_set, mutated)
+        while mutated_node.data == new_data:
+            new_data = choose_random_element(term_set)
+        
+    child = change_node_by_instructions(child, new_data, instr)
+
+    # reset fitness
+    child.fitness = None
     
-    return node, mutated
+    return child
 
 # initiate population using the method "ramped half-and-half"
 def initiate_pop(pop_size, max_depth, func_set, term_set):
@@ -140,38 +154,29 @@ def initiate_pop(pop_size, max_depth, func_set, term_set):
 
     return np.array(pop)
 
-def select_max(pop, indexes):
-    copy_pop = copy.deepcopy(pop)
-    
-    max_value = copy_pop[indexes[0]].fitness
-    max_index = indexes[0]
-    for i in range(len(indexes)):
-        if copy_pop[indexes[i]].fitness > max_value:
-            max_value = copy_pop[indexes[i]].fitness
-            max_index = indexes[i]
+def select_max(selected):
+    max_value = selected[0].fitness
+    max_ind = selected[0]
+    for i in range(len(selected)):
+        if selected[i].fitness > max_value:
+            max_value = selected[i].fitness
+            max_ind = selected[i]
 
-    return pop[max_index], max_index
+    return max_ind
 
 def tournament_selection(pop, k, n_ind):
-    # shuffled_pop = copy.deepcopy(pop)
-    # np.random.shuffle(shuffled_pop)
-    
-    ind_index = np.arange(pop.shape[0])
-    np.random.shuffle(ind_index)
-
+    shuffled_pop = copy.deepcopy(pop)
+    np.random.shuffle(shuffled_pop)
 
     # choose the best individual among the k initial individuals from shuffled population
-    best1, index1 = select_max(pop, ind_index[:k])
+    best1 = select_max(shuffled_pop[:k])
 
     # if we need to select two individuals, the same rule above is applied, just choosing between the last k individuals from shuffled population
     best2 = None
-    index2 = index1
     if n_ind == 2:
-        while index2 == index1:
-            np.random.shuffle(ind_index)
-            best2, index2 = select_max(pop, ind_index[:k])
+        best2 = select_max(shuffled_pop[-k:])
 
-    return best1, index1, best2, index2
+    return best1, best2
 
 def calculate_fitness(ind, df, X, target, func_set, number_of_clusters):
     ind_exp = ind.unroll_expression([])
@@ -210,37 +215,15 @@ def read_data(file_name, drop_column):
 
     return df, X
 
-def update_pop(pop, parents, indexes, children, best_fitness):
-    # check if one child is the best individual right now
-    for child in children:
-        if child.fitness > best_fitness:
-            best_fitness = child.fitness
+def get_best_fitness(pop):
+    best_fitness = 0
+    best_ind = None
+    for ind in pop:
+        if ind.fitness > best_fitness:
+            best_fitness = ind.fitness
+            best_ind = ind
 
-    # check if one parent is the best individual right now
-    # if it is, delete the other parent and add a random child to pop
-    for i in range(len(parents)):
-        if parents[i].fitness == best_fitness:
-            pop = np.delete(pop, indexes)
-            random_child = random.randint(0, len(children)-1)
-            pop = np.append(pop, parents[i])
-            pop = np.append(pop, children[random_child])
-            return pop, best_fitness
-    
-    pop = np.delete(pop, indexes)
-    pop = np.append(pop, child)
-    return pop, best_fitness
-            
-
-def compare_pop(old_pop, new_pop):
-    for ind in old_pop:
-        found = False
-        for new_ind in new_pop:
-            if(new_ind.unroll_expression([]) == ind.unroll_expression([])):
-                found = True
-                break
-        if not found:
-            print("Not Found:")
-            ind.PrintTree()
+    return best_fitness, best_ind
 
 def run_for_database(file_name, prob_crossover, prob_mutation, tour_size, pop_size, n_gen):
     # set functions and terminals
@@ -258,81 +241,56 @@ def run_for_database(file_name, prob_crossover, prob_mutation, tour_size, pop_si
     
     df, X = read_data(file_name, labels_column)
 
+    print('Initiating population')
     pop = initiate_pop(pop_size, tree_max_depth, func_set, term_set)
 
-    best_fitness = 0
+    print('Calculating initial fitness')
     for ind in pop:
         ind.fitness = calculate_fitness(ind, df, X, df[labels_column], func_set, n_clusters)
-        if ind.fitness > best_fitness:
-            best_fitness = ind.fitness
 
-    #TODO: remove parents from population and add children to it
-    gen_prob = random.random()
-    if gen_prob < prob_crossover:
-        print('Crossover:\n')
-        
-        parent1, i1, parent2, i2 = tournament_selection(pop, tour_size, 2)
-        print('Parent 1:')
-        parent1.PrintTree()
-        print('\nParent 2:')
-        parent2.PrintTree()
+    best_fitness, best_ind = get_best_fitness(pop)
+    print('Initial best fitness: ' + str(round(best_fitness, 5)))
 
-        child1, child2 = crossover(parent1, parent2)
-        print('\n\nChild 1:')
-        child1.PrintTree()
-        print('\nChild 2:')
-        child2.PrintTree()
+    for i in range(n_gen):
+        print('Running generation ' + str(i + 1))
 
-        child1.fitness = calculate_fitness(child1, df, X, df[labels_column], func_set, n_clusters)
-        child2.fitness = calculate_fitness(child1, df, X, df[labels_column], func_set, n_clusters)
+        new_gen = np.array([best_ind])
 
-        parents = [parent1, parent2]
-        indexes = [i1, i2]
-        children = [child1, child2]
+        while new_gen.shape[0] < pop.shape[0]:
+            gen_prob = random.random()
+            if gen_prob < prob_crossover:
+                parent1, parent2 = tournament_selection(pop, tour_size, 2)
 
-        old_pop = copy.deepcopy(pop)
-        pop, best_fitness = update_pop(pop, parents, indexes, children, best_fitness)
+                child1, child2 = crossover(parent1, parent2, tree_max_depth)
 
-        compare_pop(old_pop, pop)
+                new_gen = np.append(new_gen, [child1, child2])
 
-    elif gen_prob < prob_crossover + prob_mutation:
-        print('Mutation:\n')
+            elif gen_prob < prob_crossover + prob_mutation:
+                parent, _ = tournament_selection(pop, tour_size, 1)
 
-        parent, i, _, _ = tournament_selection(pop, tour_size, 1)
-        print('Parent :')
-        parent.PrintTree()
+                child = mutation(parent, func_set, term_set)
 
-        child, _ = mutation(parent, func_set, term_set)
-        print('Child :')
-        child.PrintTree()
+                new_gen = np.append(new_gen, child)
 
-        parents = [parent]
-        indexes = [i]
-        children = [child]
+            else:
+                parent, _ = tournament_selection(pop, tour_size, 1)
 
-        old_pop = copy.deepcopy(pop)
-        pop, best_fitness = update_pop(pop, parents, indexes, children, best_fitness)
+                child = copy.deepcopy(parent)
 
-        compare_pop(old_pop, pop)
-    else:
-        print('Reproduction:\n')
+                new_gen = np.append(new_gen, child)
 
-        parent, i, _, _ = tournament_selection(pop, tour_size, 1)
-        print('Parent :')
-        parent.PrintTree()
+        print('Calculating fitness')
+        # not necessary to recalculate the fitness for the nodes that we already know the fitness 
+        for ind in new_gen:
+            if ind.fitness == None:
+                ind.fitness = calculate_fitness(ind, df, X, df[labels_column], func_set, n_clusters)
 
-        child = copy.deepcopy(parent)
-        print('Child :')
-        child.PrintTree()
+        # writing a copy to prevent overwrite
+        # if the new gen overpass the maximum number of individuals, we delete the last ones
+        pop = copy.deepcopy(new_gen[:pop_size])
 
-        parents = [parent]
-        indexes = [i]
-        children = [child]
-
-        old_pop = copy.deepcopy(pop)
-        pop, best_fitness = update_pop(pop, parents, indexes, children, best_fitness)
-
-        compare_pop(old_pop, pop)
+        best_fitness, best_ind = get_best_fitness(pop)
+        print('Best fitness: ' + str(round(best_fitness, 5)))
     
 
 if __name__ == "__main__" :
@@ -347,11 +305,29 @@ if __name__ == "__main__" :
 
     # for i in range(3):
     #     full = Node('')
-    #     full.generate_expr(5, func_set, term_set, "full")
+    #     full.generate_expr(7, func_set, term_set, "full")
     #     pop.append(full)
 
     # pop = np.array(pop)
 
     # ind = pop[0]
+
+    # print(ind.get_depth())
+    # print(pop[1].get_depth())
+
+    # print('Pai:')
+    # ind.PrintTree()
+    # print('\nPai:')
+    # pop[1].PrintTree()
+
+    # child1, child2 = crossover(pop[0], pop[1], 7)
+
+    # print('\nFilho:')
+    # child1.PrintTree()
+    # print('\nFilho:')
+    # child2.PrintTree()
+
+    # print(child1.get_depth())
+    # print(child2.get_depth())
 
     # print(np.where(pop == ind)[0])

@@ -30,6 +30,15 @@ class Node:
             expr_list = self.right.unroll_expression(expr_list)
         return expr_list
 
+    def get_depth(self):
+        left = 0
+        right = 0
+        if self.left is not None:
+            left = self.left.get_depth()
+        if self.right is not None:
+            right = self.right.get_depth()
+        return 1 + max(left, right)
+
     def PrintTree(self, origin=True):
         if self.left:
             self.left.PrintTree(False)
