@@ -4,6 +4,7 @@ import copy
 import numpy as np
 import sys
 import timeit
+import operator as op
 
 # Manipulação dos dados
 import pandas as pd
@@ -30,7 +31,7 @@ def map_value_to_param(value, params1, params2):
         return params2[int(value[1]) - 1]
 
 # @profile
-def eval(params1, params2, func_set, expr_list):
+def eval(params1, params2, func_set, operations, expr_list):
     reverse_expr = expr_list[::-1]
     new_expr = []
     for elem in reverse_expr:
@@ -41,22 +42,12 @@ def eval(params1, params2, func_set, expr_list):
             value1 = new_expr.pop()
             value2 = new_expr.pop()
             
-            if elem == '+':
-                new_expr.append(value1 + value2)
-            elif elem == '-':
-                new_expr.append(value1 - value2)
-            elif elem == '*':
-                new_expr.append(value1 * value2)
-            else:
-                if value2 == 0:
-                    new_expr.append(1)
-                else:
-                    new_expr.append(float(value1) / value2)
-    return new_expr[0]
+            new_expr.append(operations[elem](value1, value2))
+    return abs(new_expr[0])
 
 # these probabilities can (and probably will) change
 def choose_node(node, instr, max_depth):
-    if random.random() < 0.4 and (node.get_depth() - 1) <= max_depth:
+    if random.random() < 0.25 and (node.get_depth() - 1) <= max_depth:
         return node, instr
     else:
         if random.random() < 0.5:
@@ -176,9 +167,8 @@ def tournament_selection(pop, k, n_ind):
 
     return best1, best2
 
-def calculate_fitness(ind, df, X, target, func_set, number_of_clusters):
-    ind_exp = np.array(ind.unroll_expression([]))
-    # df_copy = copy.deepcopy(df)
+def calculate_fitness(ind, df, X, target, func_set, operations, number_of_clusters):
+    ind_exp = ind.unroll_expression([])
 
     def fitness_distance(data1, data2):
         """
@@ -187,35 +177,27 @@ def calculate_fitness(ind, df, X, target, func_set, number_of_clusters):
         output:
             result = distância entre os dois pontos
         """
-        result = eval(data1, data2, func_set, ind_exp)
+        result = eval(data1, data2, func_set, operations, ind_exp)
         return result
 
-    distances = pairwise_distances(X, metric=fitness_distance)
-    # np.zeros((df_copy.shape[0], df_copy.shape[0]))
-    # for i in range(df_copy.shape[0]):
-    #     for j in range(df_copy.shape[0]):
-    #         if i != j:
-    #             distances[i, j] = eval(df_copy.iloc[i], df_copy.iloc[j], func_set, ind_exp)
+    # distance function
+    fitness_metric = distance_metric(type_metric.USER_DEFINED, func=fitness_distance)
 
-    agg = AgglomerativeClustering(n_clusters=number_of_clusters, affinity='precomputed', linkage = 'average')
+    k = number_of_clusters
 
-    y_pred = agg.fit_predict(distances)
-    
-    # # distance function
-    # fitness_metric = distance_metric(type_metric.USER_DEFINED, func=fitness_distance)
+    initial_centers = kmeans_plusplus_initializer(X, k).initialize()
+    kmeans_instance = kmeans(X, initial_centers, metric=fitness_metric)
+    kmeans_instance.process()
+    clusters = kmeans_instance.get_clusters()
 
-    # k = number_of_clusters
+    for i in range(len(clusters)):
+        df.loc[clusters[i], 'y_pred'] = i
 
-    # initial_centers = kmeans_plusplus_initializer(X, k).initialize()
-    # kmeans_instance = kmeans(X, initial_centers, metric=fitness_metric)
-    # kmeans_instance.process()
-    # clusters = kmeans_instance.get_clusters()
+    score = v_measure_score(target, df.y_pred)
+    # reseting dataframe
+    df = df.drop(['y_pred'], axis=1)
 
-    # for i in range(len(clusters)):
-    #     df_copy.loc[clusters[i], 'y_pred'] = i
-    df['y_pred'] = pd.Series(y_pred)
-
-    return v_measure_score(target, df.y_pred)
+    return score
     
 def read_data(file_name, drop_column):
     # read data from csv
@@ -229,19 +211,48 @@ def get_fitness_data(pop):
     best_fitness = 0
     best_ind = None
     avg = 0.0
+    worst_fitness = 1
     for ind in pop:
         avg += ind.fitness
         if ind.fitness > best_fitness:
             best_fitness = ind.fitness
             best_ind = ind
+        if ind.fitness < worst_fitness:
+            worst_fitness = ind.fitness
     
     avg /= pop.shape[0]
-    return best_fitness, best_ind, avg
+    return best_fitness, best_ind, avg, worst_fitness
+
+def get_repeated(pop):
+    exps = []
+    equal = 0
+    for ind in pop:
+        exps.append(ind.unroll_expression([]))
+
+    set_of_exps = [list(item) for item in set(tuple(row) for row in exps)]
+
+    for exp in set_of_exps:
+        repeats = exps.count(exp)
+        if repeats > 1:
+            equal += repeats
+
+    return equal
+
+def div_protected(a, b):
+    return 1 if b == 0 else float(a)/b
 
 def run_for_database(file_name, prob_crossover, prob_mutation, tour_size, pop_size, n_gen):
     # set functions and terminals
     func_set = ['+', '-', '*', '/']
     term_set = ['a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7', 'a8', 'a9','b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7', 'b8', 'b9']
+    operations = {
+        '+': op.add,
+        '-': op.sub,
+        '*': op.mul,
+        '/': div_protected,
+        'max': max,
+        'min': min
+    }
 
     tree_max_depth = 7
 
@@ -258,14 +269,17 @@ def run_for_database(file_name, prob_crossover, prob_mutation, tour_size, pop_si
     pop = initiate_pop(pop_size, tree_max_depth, func_set, term_set)
 
     print('Calculating initial fitness')
-    df_copy = copy.deepcopy(df)
     for ind in pop:
-        ind.fitness = calculate_fitness(ind, df_copy, X, df[labels_column], func_set, n_clusters)
+        ind.fitness = calculate_fitness(ind, df, X, df[labels_column], func_set, operations, n_clusters)
 
-    best_fitness, best_ind, avg = get_fitness_data(pop)
-    print('Initial best fitness: {} / Initial avg fitness: {}'.format(str(round(best_fitness, 5)), str(round(avg, 5))))
+    best_fitness, best_ind, avg, worst_fitness = get_fitness_data(pop)
+    repeated = get_repeated(pop)
+    print('Initial best fitness: {} / Initial avg fitness: {} / Initial worst fitness: {}'.format(best_fitness, avg, worst_fitness))
+    print('Repeated: {}\n'.format(repeated))
 
     for i in range(n_gen):
+        better_than_parent = 0
+        worse_than_parent = 0
         print('Running generation ' + str(i + 1))
 
         new_gen = np.array([best_ind])
@@ -275,7 +289,23 @@ def run_for_database(file_name, prob_crossover, prob_mutation, tour_size, pop_si
             if gen_prob < prob_crossover:
                 parent1, parent2 = tournament_selection(pop, tour_size, 2)
 
+                parents_mean_fitness = (parent1.fitness + parent2.fitness) / 2.0
+
                 child1, child2 = crossover(parent1, parent2, tree_max_depth)
+
+                child1.fitness = calculate_fitness(child1, df, X, df[labels_column], func_set, operations, n_clusters)
+
+                child2.fitness = calculate_fitness(child2, df, X, df[labels_column], func_set, operations, n_clusters)
+
+                if child1.fitness < parents_mean_fitness:
+                    worse_than_parent += 1
+                elif child1.fitness > parents_mean_fitness:
+                    better_than_parent += 1
+                
+                if child2.fitness < parents_mean_fitness:
+                    worse_than_parent += 1
+                elif child2.fitness > parents_mean_fitness:
+                    better_than_parent += 1
 
                 new_gen = np.append(new_gen, [child1, child2])
 
@@ -293,22 +323,25 @@ def run_for_database(file_name, prob_crossover, prob_mutation, tour_size, pop_si
 
                 new_gen = np.append(new_gen, child)
 
-        print('Calculating fitness')
         # not necessary to recalculate the fitness for the nodes that we already know the fitness 
         for ind in new_gen:
             if ind.fitness == None:
-                ind.fitness = calculate_fitness(ind, df, X, df[labels_column], func_set, n_clusters)
+                ind.fitness = calculate_fitness(ind, df, X, df[labels_column], func_set, operations, n_clusters)
 
         # writing a copy to prevent overwrite
         # if the new gen overpass the maximum number of individuals, we delete the last ones
-        pop = copy.deepcopy(new_gen[:pop_size])
+        pop = np.copy(new_gen[:pop_size])
 
-        best_fitness, best_ind, avg = get_fitness_data(pop)
-        print('Best fitness: {} / Avg fitness: {}'.format(str(round(best_fitness, 5)), str(round(avg, 5))))
+        best_fitness, best_ind, avg, worst_fitness = get_fitness_data(pop)
+        repeated = get_repeated(pop)
+        print('Best fitness: {} / Avg fitness: {} / Worst fitness: {}'.format(best_fitness, avg, worst_fitness))
+        print('Repeated: {} / Better than parents: {} / Worse than parents: {}\n'.format(repeated, better_than_parent, worse_than_parent))
 
-    test_result(file_name[:-9] + 'test.csv', func_set,  best_ind)
 
-def test_result(file_name, func_set, best_ind):
+    test_result(file_name[:-9] + 'test.csv', func_set, operations, best_ind)
+
+def test_result(file_name, func_set, operations, best_ind):
+    print('Testing best individual on the test set')
     if file_name == 'data/breast_cancer_coimbra_test.csv':
         labels_column = 'Classification'
         n_clusters = 2
@@ -318,55 +351,16 @@ def test_result(file_name, func_set, best_ind):
 
     df, X = read_data(file_name, labels_column)
 
-    best_ind.fitness = calculate_fitness(best_ind, df, X, df[labels_column], func_set, n_clusters)
+    best_ind.fitness = calculate_fitness(best_ind, df, X, df[labels_column], func_set, operations, n_clusters)
 
-    print('Achieved fitness: {}'.format(round(best_ind.fitness, 5)))
+    print('Achieved fitness: {}'.format(best_ind.fitness))
     
 
 if __name__ == "__main__" :
     start = timeit.default_timer()
-    run_for_database(file_name='data/breast_cancer_coimbra_train.csv', prob_crossover=0.9, prob_mutation=0.05, tour_size=3, pop_size=60, n_gen=10)
+    run_for_database(file_name='data/breast_cancer_coimbra_train.csv', prob_crossover=0.9, prob_mutation=0.05, tour_size=3, pop_size=60, n_gen=20)
     stop = timeit.default_timer()
 
     print('Time: ', stop - start)
 
-
     # run_for_database(file_name='data/glass_train.csv', prob_crossover=0.9, prob_mutation=0.05, tour_size=3, pop_size=60, n_gen=100)
-
-    # pop = []
-
-    # func_set = ['+', '-', '*', '/']
-    # term_set = ['a_1', 'a_2', 'a_3', 'a_4', 'a_5', 'a_6', 'a_7', 'a_8', 'a_9','b_1', 'b_2', 'b_3', 'b_4', 'b_5', 'b_6', 'b_7', 'b_8', 'b_9']
-
-    # for i in range(3):
-    #     full = Node('')
-    #     full.generate_expr(3, func_set, term_set, "full")
-    #     pop.append(full)
-
-    # pop = np.array(pop)
-
-    # ind = pop[0]
-    # ind2 = pop[1]
-
-    # print(ind.get_depth())
-    # print(pop[1].get_depth())
-
-    # print('Pai:')
-    # ind.PrintTree()
-    # print('\nPai:')
-    # pop[1].PrintTree()
-
-    # # child1, child2 = crossover(ind, ind2, 7)
-
-    # mutation(ind, func_set, term_set, 7).PrintTree()
-
-    # ind.PrintTree()
-    # # print('\nFilho:')
-    # # child1.PrintTree()
-    # # print('\nFilho:')
-    # # child2.PrintTree()
-
-    # # print(child1.get_depth())
-    # # print(child2.get_depth())
-
-    # print(np.where(pop == ind)[0])
