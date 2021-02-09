@@ -1,0 +1,1520 @@
+Prob crossover: 0.9 / Prob mutation: 0.05 / Tour size: 3 / Pop size: 36 / N Gen: 36
+Initiating population
+Calculating initial fitness
+Initial best fitness: 0.0466750964250977 / Initial avg fitness: 0.003933342442936798 / Initial worst fitness: 6.486687860771986e-16
+Repeated: 5
+
+Running generation 1
+Best fitness: 0.0466750964250977 / Avg fitness: 0.004300234497675391 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 7 / Worse than parents: 21
+
+Running generation 2
+Best fitness: 0.0466750964250977 / Avg fitness: 0.004975700895146214 / Worst fitness: 6.486687860771986e-16
+Repeated: 4 / Better than parents: 7 / Worse than parents: 27
+
+Running generation 3
+Best fitness: 0.05921276605688419 / Avg fitness: 0.008459073690434008 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 6 / Worse than parents: 26
+
+Running generation 4
+Best fitness: 0.10402661766930371 / Avg fitness: 0.014858134995675676 / Worst fitness: 0.0
+Repeated: 0 / Better than parents: 12 / Worse than parents: 22
+
+Running generation 5
+Best fitness: 0.10402661766930371 / Avg fitness: 0.014899950740385613 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 3 / Worse than parents: 31
+
+Running generation 6
+Best fitness: 0.10402661766930371 / Avg fitness: 0.02154980192448087 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 8 / Worse than parents: 26
+
+Running generation 7
+Best fitness: 0.14164713571829352 / Avg fitness: 0.03629673287404599 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 10 / Worse than parents: 26
+
+Running generation 8
+Best fitness: 0.14164713571829352 / Avg fitness: 0.029901392933507756 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 6 / Worse than parents: 28
+
+Running generation 9
+Best fitness: 0.14164713571829352 / Avg fitness: 0.05021903059271282 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 10 / Worse than parents: 24
+
+Running generation 10
+Best fitness: 0.14164713571829352 / Avg fitness: 0.050895579139219306 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 6 / Worse than parents: 28
+
+Running generation 11
+Best fitness: 0.18591065904984141 / Avg fitness: 0.07720048998472578 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 12 / Worse than parents: 20
+
+Running generation 12
+Best fitness: 0.18591065904984141 / Avg fitness: 0.07041203295435115 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 5 / Worse than parents: 27
+
+Running generation 13
+Best fitness: 0.18591065904984141 / Avg fitness: 0.08219962196099241 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 4 / Worse than parents: 25
+
+Running generation 14
+Best fitness: 0.18591065904984141 / Avg fitness: 0.08207763952494934 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 5 / Worse than parents: 25
+
+Running generation 15
+Best fitness: 0.18591065904984141 / Avg fitness: 0.0881885858125651 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 7 / Worse than parents: 23
+
+Running generation 16
+Best fitness: 0.18591065904984141 / Avg fitness: 0.07968091010944237 / Worst fitness: 6.232449021384381e-16
+Repeated: 0 / Better than parents: 3 / Worse than parents: 29
+
+Running generation 17
+Best fitness: 0.18591065904984141 / Avg fitness: 0.07690640869074163 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 9 / Worse than parents: 27
+
+Running generation 18
+Best fitness: 0.18591065904984141 / Avg fitness: 0.06662319789519217 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 11 / Worse than parents: 25
+
+Running generation 19
+Best fitness: 0.18591065904984141 / Avg fitness: 0.0822688315105326 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 8 / Worse than parents: 28
+
+Running generation 20
+Best fitness: 0.18591065904984141 / Avg fitness: 0.08576609477593518 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 12 / Worse than parents: 20
+
+Running generation 21
+Best fitness: 0.18591065904984141 / Avg fitness: 0.0843717708548908 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 5 / Worse than parents: 26
+
+Running generation 22
+Best fitness: 0.18591065904984141 / Avg fitness: 0.08486498548544022 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 6 / Worse than parents: 27
+
+Running generation 23
+Best fitness: 0.18591065904984141 / Avg fitness: 0.09261051939729215 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 8 / Worse than parents: 23
+
+Running generation 24
+Best fitness: 0.18591065904984141 / Avg fitness: 0.07977353051865463 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 3 / Worse than parents: 31
+
+Running generation 25
+Best fitness: 0.18591065904984141 / Avg fitness: 0.08107767359179169 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 10 / Worse than parents: 22
+
+Running generation 26
+Best fitness: 0.18591065904984141 / Avg fitness: 0.08437718445215048 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 7 / Worse than parents: 25
+
+Running generation 27
+Best fitness: 0.18591065904984141 / Avg fitness: 0.08753328123879595 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 3 / Worse than parents: 30
+
+Running generation 28
+Best fitness: 0.18591065904984141 / Avg fitness: 0.08194560517829405 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 5 / Worse than parents: 28
+
+Running generation 29
+Best fitness: 0.18591065904984141 / Avg fitness: 0.08177455920977424 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 4 / Worse than parents: 30
+
+Running generation 30
+Best fitness: 0.18591065904984141 / Avg fitness: 0.08100983539208638 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 7 / Worse than parents: 27
+
+Running generation 31
+Best fitness: 0.18591065904984141 / Avg fitness: 0.09001616536298657 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 7 / Worse than parents: 27
+
+Running generation 32
+Best fitness: 0.18591065904984141 / Avg fitness: 0.09251438830650595 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 3 / Worse than parents: 29
+
+Running generation 33
+Best fitness: 0.18591065904984141 / Avg fitness: 0.0821380104315853 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 7 / Worse than parents: 26
+
+Running generation 34
+Best fitness: 0.18591065904984141 / Avg fitness: 0.0906833627154646 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 3 / Worse than parents: 27
+
+Running generation 35
+Best fitness: 0.18591065904984141 / Avg fitness: 0.07994058068317555 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 6 / Worse than parents: 28
+
+Running generation 36
+Best fitness: 0.18591065904984141 / Avg fitness: 0.09106544088729236 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 12 / Worse than parents: 22
+
+Testing best individual on the test set
+Achieved fitness: 0.17871023341808764
+Prob crossover: 0.9 / Prob mutation: 0.05 / Tour size: 3 / Pop size: 36 / N Gen: 36
+Initiating population
+Calculating initial fitness
+Initial best fitness: 0.052931988991299014 / Initial avg fitness: 0.004895317014682715 / Initial worst fitness: 6.486687860771986e-16
+Repeated: 6
+
+Running generation 1
+Best fitness: 0.107704829007651 / Avg fitness: 0.019186503714176947 / Worst fitness: 6.486687860771986e-16
+Repeated: 5 / Better than parents: 12 / Worse than parents: 20
+
+Running generation 2
+Best fitness: 0.107704829007651 / Avg fitness: 0.021449598154462447 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 7 / Worse than parents: 23
+
+Running generation 3
+Best fitness: 0.107704829007651 / Avg fitness: 0.027860975470260216 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 8 / Worse than parents: 23
+
+Running generation 4
+Best fitness: 0.107704829007651 / Avg fitness: 0.020724868712075073 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 7 / Worse than parents: 27
+
+Running generation 5
+Best fitness: 0.107704829007651 / Avg fitness: 0.019308146212986852 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 6 / Worse than parents: 26
+
+Running generation 6
+Best fitness: 0.1249603438859247 / Avg fitness: 0.02315546206712875 / Worst fitness: 6.486687860771986e-16
+Repeated: 4 / Better than parents: 6 / Worse than parents: 24
+
+Running generation 7
+Best fitness: 0.1249603438859247 / Avg fitness: 0.021144536227163023 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 8 / Worse than parents: 28
+
+Running generation 8
+Best fitness: 0.1249603438859247 / Avg fitness: 0.029405252033128763 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 6 / Worse than parents: 26
+
+Running generation 9
+Best fitness: 0.1249603438859247 / Avg fitness: 0.02581642353885927 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 3 / Worse than parents: 31
+
+Running generation 10
+Best fitness: 0.13065573085539192 / Avg fitness: 0.03073980455609681 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 8 / Worse than parents: 28
+
+Running generation 11
+Best fitness: 0.13065573085539192 / Avg fitness: 0.049757026563461926 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 9 / Worse than parents: 23
+
+Running generation 12
+Best fitness: 0.13065573085539192 / Avg fitness: 0.033457165448037264 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 3 / Worse than parents: 30
+
+Running generation 13
+Best fitness: 0.13065573085539192 / Avg fitness: 0.03656730372492848 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 7 / Worse than parents: 28
+
+Running generation 14
+Best fitness: 0.13065573085539192 / Avg fitness: 0.040587458525699754 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 6 / Worse than parents: 28
+
+Running generation 15
+Best fitness: 0.1330135128391724 / Avg fitness: 0.05252630279060461 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 12 / Worse than parents: 22
+
+Running generation 16
+Best fitness: 0.1493627173213619 / Avg fitness: 0.0576163545114121 / Worst fitness: 6.232449021384381e-16
+Repeated: 3 / Better than parents: 5 / Worse than parents: 29
+
+Running generation 17
+Best fitness: 0.1493627173213619 / Avg fitness: 0.048107075131166806 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 4 / Worse than parents: 30
+
+Running generation 18
+Best fitness: 0.1541784057350447 / Avg fitness: 0.06265282345991197 / Worst fitness: 6.486687860771986e-16
+Repeated: 5 / Better than parents: 9 / Worse than parents: 23
+
+Running generation 19
+Best fitness: 0.1635326854086504 / Avg fitness: 0.08357501126886295 / Worst fitness: 6.486687860771986e-16
+Repeated: 4 / Better than parents: 9 / Worse than parents: 25
+
+Running generation 20
+Best fitness: 0.1635326854086504 / Avg fitness: 0.06561705287620144 / Worst fitness: 6.486687860771986e-16
+Repeated: 4 / Better than parents: 1 / Worse than parents: 33
+
+Running generation 21
+Best fitness: 0.1635326854086504 / Avg fitness: 0.05625511424030711 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 5 / Worse than parents: 28
+
+Running generation 22
+Best fitness: 0.1635326854086504 / Avg fitness: 0.06268532799092659 / Worst fitness: 6.486687860771986e-16
+Repeated: 3 / Better than parents: 9 / Worse than parents: 23
+
+Running generation 23
+Best fitness: 0.22332296268147236 / Avg fitness: 0.07360439663417281 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 7 / Worse than parents: 27
+
+Running generation 24
+Best fitness: 0.22332296268147236 / Avg fitness: 0.06126247957462364 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 4 / Worse than parents: 28
+
+Running generation 25
+Best fitness: 0.22332296268147236 / Avg fitness: 0.08273256574892819 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 10 / Worse than parents: 22
+
+Running generation 26
+Best fitness: 0.22332296268147236 / Avg fitness: 0.0781741389901131 / Worst fitness: 0.0009036810677518624
+Repeated: 0 / Better than parents: 2 / Worse than parents: 32
+
+Running generation 27
+Best fitness: 0.22332296268147236 / Avg fitness: 0.06960034182967925 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 8 / Worse than parents: 26
+
+Running generation 28
+Best fitness: 0.22332296268147236 / Avg fitness: 0.06500744840742458 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 7 / Worse than parents: 27
+
+Running generation 29
+Best fitness: 0.22332296268147236 / Avg fitness: 0.07633089673895022 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 10 / Worse than parents: 26
+
+Running generation 30
+Best fitness: 0.22332296268147236 / Avg fitness: 0.07402682829078405 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 7 / Worse than parents: 25
+
+Running generation 31
+Best fitness: 0.22332296268147236 / Avg fitness: 0.07618423358261252 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 7 / Worse than parents: 26
+
+Running generation 32
+Best fitness: 0.22332296268147236 / Avg fitness: 0.09773316910938665 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 8 / Worse than parents: 26
+
+Running generation 33
+Best fitness: 0.22332296268147236 / Avg fitness: 0.0736741588029305 / Worst fitness: 6.232449021384381e-16
+Repeated: 0 / Better than parents: 4 / Worse than parents: 30
+
+Running generation 34
+Best fitness: 0.22332296268147236 / Avg fitness: 0.07800611299346417 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 3 / Worse than parents: 31
+
+Running generation 35
+Best fitness: 0.22332296268147236 / Avg fitness: 0.07134647911620796 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 2 / Worse than parents: 32
+
+Running generation 36
+Best fitness: 0.22332296268147236 / Avg fitness: 0.08187473670022016 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 11 / Worse than parents: 23
+
+Testing best individual on the test set
+Achieved fitness: 0.2857419893079585
+Prob crossover: 0.9 / Prob mutation: 0.05 / Tour size: 3 / Pop size: 36 / N Gen: 36
+Initiating population
+Calculating initial fitness
+Initial best fitness: 0.030442650300345975 / Initial avg fitness: 0.002370809230032213 / Initial worst fitness: 6.486687860771986e-16
+Repeated: 10
+
+Running generation 1
+Best fitness: 0.051638164979657515 / Avg fitness: 0.00893962822482277 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 8 / Worse than parents: 18
+
+Running generation 2
+Best fitness: 0.05921276605688419 / Avg fitness: 0.012337135232773857 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 8 / Worse than parents: 23
+
+Running generation 3
+Best fitness: 0.05921276605688419 / Avg fitness: 0.006770739015791952 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 0 / Worse than parents: 30
+
+Running generation 4
+Best fitness: 0.05921276605688419 / Avg fitness: 0.009747526143652322 / Worst fitness: 6.486687860771986e-16
+Repeated: 3 / Better than parents: 7 / Worse than parents: 25
+
+Running generation 5
+Best fitness: 0.05921276605688419 / Avg fitness: 0.007892810077160617 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 11 / Worse than parents: 25
+
+Running generation 6
+Best fitness: 0.05921276605688419 / Avg fitness: 0.010567668992565645 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 6 / Worse than parents: 27
+
+Running generation 7
+Best fitness: 0.05921276605688419 / Avg fitness: 0.008905762998165876 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 6 / Worse than parents: 28
+
+Running generation 8
+Best fitness: 0.0818450116687129 / Avg fitness: 0.01074846633425326 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 9 / Worse than parents: 25
+
+Running generation 9
+Best fitness: 0.0818450116687129 / Avg fitness: 0.015309780971099989 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 9 / Worse than parents: 25
+
+Running generation 10
+Best fitness: 0.09394181170927578 / Avg fitness: 0.017702209512160894 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 4 / Worse than parents: 32
+
+Running generation 11
+Best fitness: 0.09394181170927578 / Avg fitness: 0.012886526445142767 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 4 / Worse than parents: 30
+
+Running generation 12
+Best fitness: 0.09394181170927578 / Avg fitness: 0.01923820769092094 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 9 / Worse than parents: 23
+
+Running generation 13
+Best fitness: 0.09394181170927578 / Avg fitness: 0.013168234312373529 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 4 / Worse than parents: 32
+
+Running generation 14
+Best fitness: 0.09394181170927578 / Avg fitness: 0.020589194995722065 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 10 / Worse than parents: 24
+
+Running generation 15
+Best fitness: 0.09394181170927578 / Avg fitness: 0.031121052801558066 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 9 / Worse than parents: 26
+
+Running generation 16
+Best fitness: 0.11542622332749838 / Avg fitness: 0.04575452081338983 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 10 / Worse than parents: 22
+
+Running generation 17
+Best fitness: 0.11542622332749838 / Avg fitness: 0.02805849456139473 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 5 / Worse than parents: 31
+
+Running generation 18
+Best fitness: 0.11542622332749838 / Avg fitness: 0.03108284348879558 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 7 / Worse than parents: 27
+
+Running generation 19
+Best fitness: 0.13879928149899398 / Avg fitness: 0.02601828388153104 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 6 / Worse than parents: 28
+
+Running generation 20
+Best fitness: 0.13879928149899398 / Avg fitness: 0.023905325788063966 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 8 / Worse than parents: 28
+
+Running generation 21
+Best fitness: 0.13879928149899398 / Avg fitness: 0.0281810641885364 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 8 / Worse than parents: 24
+
+Running generation 22
+Best fitness: 0.13879928149899398 / Avg fitness: 0.0326990685656898 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 10 / Worse than parents: 26
+
+Running generation 23
+Best fitness: 0.13879928149899398 / Avg fitness: 0.03874612735584804 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 6 / Worse than parents: 28
+
+Running generation 24
+Best fitness: 0.13879928149899398 / Avg fitness: 0.04496700353409535 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 7 / Worse than parents: 24
+
+Running generation 25
+Best fitness: 0.13879928149899398 / Avg fitness: 0.049014881402227435 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 8 / Worse than parents: 26
+
+Running generation 26
+Best fitness: 0.14120509268641837 / Avg fitness: 0.06190506891456108 / Worst fitness: 6.232449021384381e-16
+Repeated: 0 / Better than parents: 8 / Worse than parents: 26
+
+Running generation 27
+Best fitness: 0.14120509268641837 / Avg fitness: 0.05604922220592867 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 6 / Worse than parents: 30
+
+Running generation 28
+Best fitness: 0.14120509268641837 / Avg fitness: 0.07304952957204881 / Worst fitness: 6.486687860771986e-16
+Repeated: 3 / Better than parents: 9 / Worse than parents: 23
+
+Running generation 29
+Best fitness: 0.14120509268641837 / Avg fitness: 0.08297370780266933 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 8 / Worse than parents: 26
+
+Running generation 30
+Best fitness: 0.14637239559616053 / Avg fitness: 0.07545145222221966 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 6 / Worse than parents: 25
+
+Running generation 31
+Best fitness: 0.14637239559616053 / Avg fitness: 0.0705466047830621 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 3 / Worse than parents: 27
+
+Running generation 32
+Best fitness: 0.14637239559616053 / Avg fitness: 0.07764379924834043 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 8 / Worse than parents: 25
+
+Running generation 33
+Best fitness: 0.14637239559616053 / Avg fitness: 0.08408973511776645 / Worst fitness: 6.486687860771986e-16
+Repeated: 3 / Better than parents: 9 / Worse than parents: 24
+
+Running generation 34
+Best fitness: 0.14637239559616053 / Avg fitness: 0.09052584650382617 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 8 / Worse than parents: 24
+
+Running generation 35
+Best fitness: 0.14637239559616053 / Avg fitness: 0.07402721628106358 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 3 / Worse than parents: 27
+
+Running generation 36
+Best fitness: 0.14637239559616053 / Avg fitness: 0.08040829958713896 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 8 / Worse than parents: 22
+
+Testing best individual on the test set
+Achieved fitness: 0.2313598919830775
+Prob crossover: 0.9 / Prob mutation: 0.05 / Tour size: 3 / Pop size: 36 / N Gen: 36
+Initiating population
+Calculating initial fitness
+Initial best fitness: 0.04080461793991311 / Initial avg fitness: 0.002686834206971208 / Initial worst fitness: 6.486687860771986e-16
+Repeated: 9
+
+Running generation 1
+Best fitness: 0.04080461793991311 / Avg fitness: 0.0048516967169549155 / Worst fitness: 6.486687860771986e-16
+Repeated: 7 / Better than parents: 6 / Worse than parents: 20
+
+Running generation 2
+Best fitness: 0.07333484715261304 / Avg fitness: 0.012599015588722942 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 11 / Worse than parents: 21
+
+Running generation 3
+Best fitness: 0.07333484715261304 / Avg fitness: 0.011866657412778961 / Worst fitness: 6.486687860771986e-16
+Repeated: 4 / Better than parents: 6 / Worse than parents: 24
+
+Running generation 4
+Best fitness: 0.07333484715261304 / Avg fitness: 0.015130422149412681 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 6 / Worse than parents: 26
+
+Running generation 5
+Best fitness: 0.07333484715261304 / Avg fitness: 0.009499163306832772 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 3 / Worse than parents: 29
+
+Running generation 6
+Best fitness: 0.07333484715261304 / Avg fitness: 0.01093435910514157 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 7 / Worse than parents: 29
+
+Running generation 7
+Best fitness: 0.07333484715261304 / Avg fitness: 0.011512528261668934 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 5 / Worse than parents: 29
+
+Running generation 8
+Best fitness: 0.07333484715261304 / Avg fitness: 0.012802847985118371 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 7 / Worse than parents: 24
+
+Running generation 9
+Best fitness: 0.0960613170865325 / Avg fitness: 0.02085161271496714 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 12 / Worse than parents: 19
+
+Running generation 10
+Best fitness: 0.0960613170865325 / Avg fitness: 0.02291152753309324 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 5 / Worse than parents: 27
+
+Running generation 11
+Best fitness: 0.0960613170865325 / Avg fitness: 0.01946684590921073 / Worst fitness: 6.232449021384381e-16
+Repeated: 0 / Better than parents: 4 / Worse than parents: 30
+
+Running generation 12
+Best fitness: 0.0960613170865325 / Avg fitness: 0.02317044746826896 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 6 / Worse than parents: 26
+
+Running generation 13
+Best fitness: 0.0960613170865325 / Avg fitness: 0.022533231549071584 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 7 / Worse than parents: 23
+
+Running generation 14
+Best fitness: 0.0960613170865325 / Avg fitness: 0.024157121870453914 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 8 / Worse than parents: 28
+
+Running generation 15
+Best fitness: 0.0960613170865325 / Avg fitness: 0.028234329427717524 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 8 / Worse than parents: 25
+
+Running generation 16
+Best fitness: 0.0960613170865325 / Avg fitness: 0.031755322362617425 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 9 / Worse than parents: 27
+
+Running generation 17
+Best fitness: 0.0960613170865325 / Avg fitness: 0.024900982825436267 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 6 / Worse than parents: 27
+
+Running generation 18
+Best fitness: 0.11914944604218713 / Avg fitness: 0.03132142369018197 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 6 / Worse than parents: 26
+
+Running generation 19
+Best fitness: 0.14152234824124107 / Avg fitness: 0.03341768123217425 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 4 / Worse than parents: 27
+
+Running generation 20
+Best fitness: 0.14152234824124107 / Avg fitness: 0.03203516361747884 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 7 / Worse than parents: 27
+
+Running generation 21
+Best fitness: 0.14152234824124107 / Avg fitness: 0.03445221720862209 / Worst fitness: 6.232449021384381e-16
+Repeated: 0 / Better than parents: 10 / Worse than parents: 25
+
+Running generation 22
+Best fitness: 0.14152234824124107 / Avg fitness: 0.029615772849509486 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 4 / Worse than parents: 30
+
+Running generation 23
+Best fitness: 0.14152234824124107 / Avg fitness: 0.02573751911834227 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 4 / Worse than parents: 27
+
+Running generation 24
+Best fitness: 0.14152234824124107 / Avg fitness: 0.03164130770519923 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 8 / Worse than parents: 25
+
+Running generation 25
+Best fitness: 0.14152234824124107 / Avg fitness: 0.026045755323717334 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 5 / Worse than parents: 26
+
+Running generation 26
+Best fitness: 0.14152234824124107 / Avg fitness: 0.026714228989043912 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 4 / Worse than parents: 29
+
+Running generation 27
+Best fitness: 0.14152234824124107 / Avg fitness: 0.03722962917405404 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 11 / Worse than parents: 22
+
+Running generation 28
+Best fitness: 0.14152234824124107 / Avg fitness: 0.02111751981347838 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 5 / Worse than parents: 28
+
+Running generation 29
+Best fitness: 0.14152234824124107 / Avg fitness: 0.0317674972068159 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 10 / Worse than parents: 23
+
+Running generation 30
+Best fitness: 0.14152234824124107 / Avg fitness: 0.03589139384477329 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 8 / Worse than parents: 26
+
+Running generation 31
+Best fitness: 0.14152234824124107 / Avg fitness: 0.030820088554574188 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 6 / Worse than parents: 28
+
+Running generation 32
+Best fitness: 0.14152234824124107 / Avg fitness: 0.03634452658004503 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 6 / Worse than parents: 27
+
+Running generation 33
+Best fitness: 0.14152234824124107 / Avg fitness: 0.03216625007413434 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 5 / Worse than parents: 26
+
+Running generation 34
+Best fitness: 0.14152234824124107 / Avg fitness: 0.03430733117669078 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 9 / Worse than parents: 23
+
+Running generation 35
+Best fitness: 0.14152234824124107 / Avg fitness: 0.03354892577076908 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 4 / Worse than parents: 28
+
+Running generation 36
+Best fitness: 0.14152234824124107 / Avg fitness: 0.04071051974792666 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 7 / Worse than parents: 24
+
+Testing best individual on the test set
+Achieved fitness: 0.0
+Prob crossover: 0.9 / Prob mutation: 0.05 / Tour size: 3 / Pop size: 36 / N Gen: 36
+Initiating population
+Calculating initial fitness
+Initial best fitness: 0.0466750964250977 / Initial avg fitness: 0.0020811300477543444 / Initial worst fitness: 6.486687860771986e-16
+Repeated: 7
+
+Running generation 1
+Best fitness: 0.0466750964250977 / Avg fitness: 0.006423276304175308 / Worst fitness: 6.486687860771986e-16
+Repeated: 10 / Better than parents: 6 / Worse than parents: 12
+
+Running generation 2
+Best fitness: 0.06120102908552535 / Avg fitness: 0.010130454390052564 / Worst fitness: 6.486687860771986e-16
+Repeated: 5 / Better than parents: 8 / Worse than parents: 24
+
+Running generation 3
+Best fitness: 0.11864170126527245 / Avg fitness: 0.0223157166009602 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 11 / Worse than parents: 21
+
+Running generation 4
+Best fitness: 0.12483117524685629 / Avg fitness: 0.02647663690462526 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 7 / Worse than parents: 25
+
+Running generation 5
+Best fitness: 0.12483117524685629 / Avg fitness: 0.03011785474784932 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 9 / Worse than parents: 23
+
+Running generation 6
+Best fitness: 0.12483117524685629 / Avg fitness: 0.03321501777713344 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 7 / Worse than parents: 27
+
+Running generation 7
+Best fitness: 0.12483117524685629 / Avg fitness: 0.03786788742206507 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 8 / Worse than parents: 28
+
+Running generation 8
+Best fitness: 0.12483117524685629 / Avg fitness: 0.03277186340534655 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 5 / Worse than parents: 29
+
+Running generation 9
+Best fitness: 0.12483117524685629 / Avg fitness: 0.026774377601571215 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 5 / Worse than parents: 25
+
+Running generation 10
+Best fitness: 0.12483117524685629 / Avg fitness: 0.02406851892336718 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 8 / Worse than parents: 28
+
+Running generation 11
+Best fitness: 0.12483117524685629 / Avg fitness: 0.036576190325626375 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 9 / Worse than parents: 26
+
+Running generation 12
+Best fitness: 0.12483117524685629 / Avg fitness: 0.03189488687919179 / Worst fitness: 6.486687860771986e-16
+Repeated: 4 / Better than parents: 5 / Worse than parents: 26
+
+Running generation 13
+Best fitness: 0.12483117524685629 / Avg fitness: 0.03850088580328365 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 12 / Worse than parents: 22
+
+Running generation 14
+Best fitness: 0.12483117524685629 / Avg fitness: 0.04239662112946894 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 4 / Worse than parents: 28
+
+Running generation 15
+Best fitness: 0.12483117524685629 / Avg fitness: 0.04799824663051512 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 7 / Worse than parents: 24
+
+Running generation 16
+Best fitness: 0.12483117524685629 / Avg fitness: 0.04499200183591427 / Worst fitness: 6.486687860771986e-16
+Repeated: 6 / Better than parents: 6 / Worse than parents: 25
+
+Running generation 17
+Best fitness: 0.12483117524685629 / Avg fitness: 0.059825156812005696 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 8 / Worse than parents: 27
+
+Running generation 18
+Best fitness: 0.12483117524685629 / Avg fitness: 0.05449213827813404 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 3 / Worse than parents: 25
+
+Running generation 19
+Best fitness: 0.12483117524685629 / Avg fitness: 0.05410472188699111 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 10 / Worse than parents: 24
+
+Running generation 20
+Best fitness: 0.15278486691933646 / Avg fitness: 0.054490845134790335 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 6 / Worse than parents: 28
+
+Running generation 21
+Best fitness: 0.15278486691933646 / Avg fitness: 0.05864345151741579 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 7 / Worse than parents: 27
+
+Running generation 22
+Best fitness: 0.15278486691933646 / Avg fitness: 0.05493515130338244 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 4 / Worse than parents: 32
+
+Running generation 23
+Best fitness: 0.15278486691933646 / Avg fitness: 0.053597471829339695 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 6 / Worse than parents: 24
+
+Running generation 24
+Best fitness: 0.15278486691933646 / Avg fitness: 0.06613155761856498 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 9 / Worse than parents: 23
+
+Running generation 25
+Best fitness: 0.15278486691933646 / Avg fitness: 0.06567320453925343 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 9 / Worse than parents: 25
+
+Running generation 26
+Best fitness: 0.15278486691933646 / Avg fitness: 0.05745514130695362 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 4 / Worse than parents: 27
+
+Running generation 27
+Best fitness: 0.15278486691933646 / Avg fitness: 0.06881944295860078 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 9 / Worse than parents: 27
+
+Running generation 28
+Best fitness: 0.15278486691933646 / Avg fitness: 0.06353922496551033 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 3 / Worse than parents: 30
+
+Running generation 29
+Best fitness: 0.15278486691933646 / Avg fitness: 0.07145593494735815 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 10 / Worse than parents: 24
+
+Running generation 30
+Best fitness: 0.15278486691933646 / Avg fitness: 0.07050411318348969 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 9 / Worse than parents: 23
+
+Running generation 31
+Best fitness: 0.15278486691933646 / Avg fitness: 0.07024420382243717 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 4 / Worse than parents: 30
+
+Running generation 32
+Best fitness: 0.15278486691933646 / Avg fitness: 0.07001126303535428 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 8 / Worse than parents: 26
+
+Running generation 33
+Best fitness: 0.15278486691933646 / Avg fitness: 0.07299494845971874 / Worst fitness: 6.486687860771986e-16
+Repeated: 5 / Better than parents: 4 / Worse than parents: 25
+
+Running generation 34
+Best fitness: 0.15278486691933646 / Avg fitness: 0.06629188486308223 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 6 / Worse than parents: 26
+
+Running generation 35
+Best fitness: 0.15278486691933646 / Avg fitness: 0.08423893621189954 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 9 / Worse than parents: 20
+
+Running generation 36
+Best fitness: 0.15278486691933646 / Avg fitness: 0.060306430473486196 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 5 / Worse than parents: 31
+
+Testing best individual on the test set
+Achieved fitness: 0.04542354549283562
+Prob crossover: 0.9 / Prob mutation: 0.05 / Tour size: 3 / Pop size: 36 / N Gen: 36
+Initiating population
+Calculating initial fitness
+Initial best fitness: 0.0714271791955734 / Initial avg fitness: 0.0043704422410639245 / Initial worst fitness: 6.486687860771986e-16
+Repeated: 8
+
+Running generation 1
+Best fitness: 0.0714271791955734 / Avg fitness: 0.007274004425956035 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 7 / Worse than parents: 17
+
+Running generation 2
+Best fitness: 0.0714271791955734 / Avg fitness: 0.007553632286604248 / Worst fitness: 6.486687860771986e-16
+Repeated: 4 / Better than parents: 5 / Worse than parents: 23
+
+Running generation 3
+Best fitness: 0.0714271791955734 / Avg fitness: 0.008903925004086075 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 6 / Worse than parents: 28
+
+Running generation 4
+Best fitness: 0.0714271791955734 / Avg fitness: 0.00881209257320255 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 3 / Worse than parents: 31
+
+Running generation 5
+Best fitness: 0.0714271791955734 / Avg fitness: 0.01375460463314268 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 8 / Worse than parents: 26
+
+Running generation 6
+Best fitness: 0.0714271791955734 / Avg fitness: 0.01686634845041844 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 10 / Worse than parents: 24
+
+Running generation 7
+Best fitness: 0.08415475742128092 / Avg fitness: 0.01649438377198731 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 9 / Worse than parents: 25
+
+Running generation 8
+Best fitness: 0.08415475742128092 / Avg fitness: 0.01807591265475856 / Worst fitness: 6.486687860771986e-16
+Repeated: 6 / Better than parents: 4 / Worse than parents: 27
+
+Running generation 9
+Best fitness: 0.08415475742128092 / Avg fitness: 0.015553186364360606 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 7 / Worse than parents: 29
+
+Running generation 10
+Best fitness: 0.08415475742128092 / Avg fitness: 0.014630219324465482 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 5 / Worse than parents: 25
+
+Running generation 11
+Best fitness: 0.08415475742128092 / Avg fitness: 0.01227201564461535 / Worst fitness: 6.232449021384381e-16
+Repeated: 0 / Better than parents: 4 / Worse than parents: 30
+
+Running generation 12
+Best fitness: 0.08415475742128092 / Avg fitness: 0.011018593945661114 / Worst fitness: 6.486687860771986e-16
+Repeated: 4 / Better than parents: 8 / Worse than parents: 28
+
+Running generation 13
+Best fitness: 0.08415475742128092 / Avg fitness: 0.01742820505406651 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 9 / Worse than parents: 23
+
+Running generation 14
+Best fitness: 0.08415475742128092 / Avg fitness: 0.016372169255993455 / Worst fitness: 0.0
+Repeated: 4 / Better than parents: 3 / Worse than parents: 29
+
+Running generation 15
+Best fitness: 0.08415475742128092 / Avg fitness: 0.014729244724075607 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 4 / Worse than parents: 30
+
+Running generation 16
+Best fitness: 0.08415475742128092 / Avg fitness: 0.01479850674835612 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 6 / Worse than parents: 28
+
+Running generation 17
+Best fitness: 0.08415475742128092 / Avg fitness: 0.017998448184029892 / Worst fitness: 6.486687860771986e-16
+Repeated: 5 / Better than parents: 9 / Worse than parents: 23
+
+Running generation 18
+Best fitness: 0.08415475742128092 / Avg fitness: 0.018636111017850746 / Worst fitness: 6.486687860771986e-16
+Repeated: 6 / Better than parents: 5 / Worse than parents: 27
+
+Running generation 19
+Best fitness: 0.08415475742128092 / Avg fitness: 0.012171317486481675 / Worst fitness: 6.486687860771986e-16
+Repeated: 5 / Better than parents: 3 / Worse than parents: 31
+
+Running generation 20
+Best fitness: 0.08415475742128092 / Avg fitness: 0.021155515375214737 / Worst fitness: 6.486687860771986e-16
+Repeated: 6 / Better than parents: 11 / Worse than parents: 22
+
+Running generation 21
+Best fitness: 0.08415475742128092 / Avg fitness: 0.020376752801089085 / Worst fitness: 6.486687860771986e-16
+Repeated: 4 / Better than parents: 4 / Worse than parents: 29
+
+Running generation 22
+Best fitness: 0.08415475742128092 / Avg fitness: 0.01894906700699155 / Worst fitness: 6.486687860771986e-16
+Repeated: 5 / Better than parents: 4 / Worse than parents: 27
+
+Running generation 23
+Best fitness: 0.08415475742128092 / Avg fitness: 0.01675298068152667 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 2 / Worse than parents: 32
+
+Running generation 24
+Best fitness: 0.08415475742128092 / Avg fitness: 0.019047945206936475 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 7 / Worse than parents: 26
+
+Running generation 25
+Best fitness: 0.08415475742128092 / Avg fitness: 0.01561169625392645 / Worst fitness: 6.232449021384381e-16
+Repeated: 0 / Better than parents: 5 / Worse than parents: 27
+
+Running generation 26
+Best fitness: 0.08415475742128092 / Avg fitness: 0.02337213597203209 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 9 / Worse than parents: 25
+
+Running generation 27
+Best fitness: 0.08415475742128092 / Avg fitness: 0.01932109148339337 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 6 / Worse than parents: 28
+
+Running generation 28
+Best fitness: 0.08415475742128092 / Avg fitness: 0.019385799450997443 / Worst fitness: 6.486687860771986e-16
+Repeated: 4 / Better than parents: 6 / Worse than parents: 30
+
+Running generation 29
+Best fitness: 0.08415475742128092 / Avg fitness: 0.016016430576587908 / Worst fitness: 6.486687860771986e-16
+Repeated: 4 / Better than parents: 3 / Worse than parents: 27
+
+Running generation 30
+Best fitness: 0.08415475742128092 / Avg fitness: 0.01900839293893529 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 6 / Worse than parents: 28
+
+Running generation 31
+Best fitness: 0.08415475742128092 / Avg fitness: 0.018099550535357403 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 6 / Worse than parents: 26
+
+Running generation 32
+Best fitness: 0.08687012205069386 / Avg fitness: 0.021973431918214284 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 7 / Worse than parents: 27
+
+Running generation 33
+Best fitness: 0.08687012205069386 / Avg fitness: 0.014880772447319631 / Worst fitness: 6.486687860771986e-16
+Repeated: 4 / Better than parents: 2 / Worse than parents: 31
+
+Running generation 34
+Best fitness: 0.08687012205069386 / Avg fitness: 0.017391055142023548 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 10 / Worse than parents: 23
+
+Running generation 35
+Best fitness: 0.08687012205069386 / Avg fitness: 0.015612393704132957 / Worst fitness: 6.486687860771986e-16
+Repeated: 6 / Better than parents: 6 / Worse than parents: 28
+
+Running generation 36
+Best fitness: 0.08687012205069386 / Avg fitness: 0.018514232535508206 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 7 / Worse than parents: 25
+
+Testing best individual on the test set
+Achieved fitness: 0.0
+Prob crossover: 0.9 / Prob mutation: 0.05 / Tour size: 3 / Pop size: 36 / N Gen: 36
+Initiating population
+Calculating initial fitness
+Initial best fitness: 0.07190575805002825 / Initial avg fitness: 0.006528676819032563 / Initial worst fitness: 6.486687860771986e-16
+Repeated: 10
+
+Running generation 1
+Best fitness: 0.07190575805002825 / Avg fitness: 0.007516250525950739 / Worst fitness: 6.486687860771986e-16
+Repeated: 8 / Better than parents: 5 / Worse than parents: 21
+
+Running generation 2
+Best fitness: 0.07190575805002825 / Avg fitness: 0.017501414353095688 / Worst fitness: 6.486687860771986e-16
+Repeated: 4 / Better than parents: 9 / Worse than parents: 23
+
+Running generation 3
+Best fitness: 0.0960613170865325 / Avg fitness: 0.03032828891561906 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 9 / Worse than parents: 24
+
+Running generation 4
+Best fitness: 0.0960613170865325 / Avg fitness: 0.028014239527816398 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 7 / Worse than parents: 23
+
+Running generation 5
+Best fitness: 0.0960613170865325 / Avg fitness: 0.02824855675169306 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 10 / Worse than parents: 21
+
+Running generation 6
+Best fitness: 0.0960613170865325 / Avg fitness: 0.02673756610525714 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 6 / Worse than parents: 26
+
+Running generation 7
+Best fitness: 0.0960613170865325 / Avg fitness: 0.023416177580082256 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 3 / Worse than parents: 29
+
+Running generation 8
+Best fitness: 0.0960613170865325 / Avg fitness: 0.029916310623105735 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 6 / Worse than parents: 27
+
+Running generation 9
+Best fitness: 0.0960613170865325 / Avg fitness: 0.04298631315377667 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 14 / Worse than parents: 19
+
+Running generation 10
+Best fitness: 0.0960613170865325 / Avg fitness: 0.0444561239951994 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 5 / Worse than parents: 22
+
+Running generation 11
+Best fitness: 0.0960613170865325 / Avg fitness: 0.04449869246308471 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 5 / Worse than parents: 22
+
+Running generation 12
+Best fitness: 0.0960613170865325 / Avg fitness: 0.03598297201269929 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 5 / Worse than parents: 25
+
+Running generation 13
+Best fitness: 0.0960613170865325 / Avg fitness: 0.03884378274579179 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 6 / Worse than parents: 25
+
+Running generation 14
+Best fitness: 0.0960613170865325 / Avg fitness: 0.04762972171022362 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 11 / Worse than parents: 17
+
+Running generation 15
+Best fitness: 0.0960613170865325 / Avg fitness: 0.047944324162458654 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 2 / Worse than parents: 26
+
+Running generation 16
+Best fitness: 0.0960613170865325 / Avg fitness: 0.0345505620494379 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 3 / Worse than parents: 30
+
+Running generation 17
+Best fitness: 0.0960613170865325 / Avg fitness: 0.033920307099405196 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 7 / Worse than parents: 27
+
+Running generation 18
+Best fitness: 0.0960613170865325 / Avg fitness: 0.031601713031659553 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 5 / Worse than parents: 23
+
+Running generation 19
+Best fitness: 0.0960613170865325 / Avg fitness: 0.047234472692193524 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 9 / Worse than parents: 23
+
+Running generation 20
+Best fitness: 0.0960613170865325 / Avg fitness: 0.03454019707394997 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 5 / Worse than parents: 29
+
+Running generation 21
+Best fitness: 0.0960613170865325 / Avg fitness: 0.032571163583110206 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 4 / Worse than parents: 26
+
+Running generation 22
+Best fitness: 0.0960613170865325 / Avg fitness: 0.0370152456398545 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 6 / Worse than parents: 26
+
+Running generation 23
+Best fitness: 0.0960613170865325 / Avg fitness: 0.025271252569774496 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 2 / Worse than parents: 34
+
+Running generation 24
+Best fitness: 0.0960613170865325 / Avg fitness: 0.024959303380914417 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 7 / Worse than parents: 26
+
+Running generation 25
+Best fitness: 0.0960613170865325 / Avg fitness: 0.03627406601655918 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 14 / Worse than parents: 18
+
+Running generation 26
+Best fitness: 0.0960613170865325 / Avg fitness: 0.037997633216344855 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 8 / Worse than parents: 26
+
+Running generation 27
+Best fitness: 0.0960613170865325 / Avg fitness: 0.03838872987580566 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 8 / Worse than parents: 26
+
+Running generation 28
+Best fitness: 0.0960613170865325 / Avg fitness: 0.04194478389378255 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 5 / Worse than parents: 26
+
+Running generation 29
+Best fitness: 0.107704829007651 / Avg fitness: 0.03767393733619728 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 5 / Worse than parents: 25
+
+Running generation 30
+Best fitness: 0.107704829007651 / Avg fitness: 0.041185593332741605 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 5 / Worse than parents: 26
+
+Running generation 31
+Best fitness: 0.107704829007651 / Avg fitness: 0.03666504530239553 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 5 / Worse than parents: 26
+
+Running generation 32
+Best fitness: 0.107704829007651 / Avg fitness: 0.047192851685709615 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 10 / Worse than parents: 24
+
+Running generation 33
+Best fitness: 0.107704829007651 / Avg fitness: 0.05166152654284888 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 9 / Worse than parents: 23
+
+Running generation 34
+Best fitness: 0.107704829007651 / Avg fitness: 0.047661033249998375 / Worst fitness: 6.486687860771986e-16
+Repeated: 3 / Better than parents: 3 / Worse than parents: 28
+
+Running generation 35
+Best fitness: 0.107704829007651 / Avg fitness: 0.043357001418522514 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 7 / Worse than parents: 27
+
+Running generation 36
+Best fitness: 0.107704829007651 / Avg fitness: 0.04880256182053944 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 6 / Worse than parents: 27
+
+Testing best individual on the test set
+Achieved fitness: 0.06876466356517148
+Prob crossover: 0.9 / Prob mutation: 0.05 / Tour size: 3 / Pop size: 36 / N Gen: 36
+Initiating population
+Calculating initial fitness
+Initial best fitness: 0.006366127746842944 / Initial avg fitness: 0.00017683688185737912 / Initial worst fitness: 6.486687860771986e-16
+Repeated: 8
+
+Running generation 1
+Best fitness: 0.0368016866002201 / Avg fitness: 0.0013028834985702655 / Worst fitness: 6.486687860771986e-16
+Repeated: 7 / Better than parents: 3 / Worse than parents: 0
+
+Running generation 2
+Best fitness: 0.07190575805002825 / Avg fitness: 0.007122070077322825 / Worst fitness: 6.486687860771986e-16
+Repeated: 4 / Better than parents: 8 / Worse than parents: 7
+
+Running generation 3
+Best fitness: 0.0960613170865325 / Avg fitness: 0.012265457029782637 / Worst fitness: 6.486687860771986e-16
+Repeated: 6 / Better than parents: 7 / Worse than parents: 17
+
+Running generation 4
+Best fitness: 0.0960613170865325 / Avg fitness: 0.032097089348680156 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 10 / Worse than parents: 14
+
+Running generation 5
+Best fitness: 0.0960613170865325 / Avg fitness: 0.046898676808761405 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 9 / Worse than parents: 21
+
+Running generation 6
+Best fitness: 0.0960613170865325 / Avg fitness: 0.04436334151114319 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 3 / Worse than parents: 26
+
+Running generation 7
+Best fitness: 0.11055283820277982 / Avg fitness: 0.06295109723135733 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 15 / Worse than parents: 18
+
+Running generation 8
+Best fitness: 0.1283766982318748 / Avg fitness: 0.06562940642489651 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 6 / Worse than parents: 21
+
+Running generation 9
+Best fitness: 0.1283766982318748 / Avg fitness: 0.08436158520466601 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 9 / Worse than parents: 14
+
+Running generation 10
+Best fitness: 0.1283766982318748 / Avg fitness: 0.07776424241027009 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 3 / Worse than parents: 22
+
+Running generation 11
+Best fitness: 0.1283766982318748 / Avg fitness: 0.07664215374080319 / Worst fitness: 6.486687860771986e-16
+Repeated: 4 / Better than parents: 5 / Worse than parents: 24
+
+Running generation 12
+Best fitness: 0.1283766982318748 / Avg fitness: 0.07376340197481498 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 9 / Worse than parents: 20
+
+Running generation 13
+Best fitness: 0.14378146867565753 / Avg fitness: 0.07395651269923785 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 8 / Worse than parents: 28
+
+Running generation 14
+Best fitness: 0.14378146867565753 / Avg fitness: 0.07365148683990026 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 9 / Worse than parents: 24
+
+Running generation 15
+Best fitness: 0.14378146867565753 / Avg fitness: 0.09441565037774546 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 8 / Worse than parents: 26
+
+Running generation 16
+Best fitness: 0.14378146867565753 / Avg fitness: 0.08893910434498457 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 11 / Worse than parents: 25
+
+Running generation 17
+Best fitness: 0.14378146867565753 / Avg fitness: 0.09738061047407576 / Worst fitness: 0.03189629184589618
+Repeated: 0 / Better than parents: 6 / Worse than parents: 26
+
+Running generation 18
+Best fitness: 0.15131940959008855 / Avg fitness: 0.09096563338553526 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 7 / Worse than parents: 25
+
+Running generation 19
+Best fitness: 0.15131940959008855 / Avg fitness: 0.09426161518369945 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 5 / Worse than parents: 28
+
+Running generation 20
+Best fitness: 0.15131940959008855 / Avg fitness: 0.10723274923011716 / Worst fitness: 0.016781291760210985
+Repeated: 2 / Better than parents: 7 / Worse than parents: 24
+
+Running generation 21
+Best fitness: 0.17643979756879158 / Avg fitness: 0.10363265882816707 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 11 / Worse than parents: 22
+
+Running generation 22
+Best fitness: 0.17643979756879158 / Avg fitness: 0.0997507790649579 / Worst fitness: 0.0001675454098696106
+Repeated: 2 / Better than parents: 5 / Worse than parents: 25
+
+Running generation 23
+Best fitness: 0.17643979756879158 / Avg fitness: 0.0907797048900193 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 3 / Worse than parents: 31
+
+Running generation 24
+Best fitness: 0.17643979756879158 / Avg fitness: 0.09470883162386125 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 13 / Worse than parents: 20
+
+Running generation 25
+Best fitness: 0.17643979756879158 / Avg fitness: 0.10873383070005584 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 12 / Worse than parents: 21
+
+Running generation 26
+Best fitness: 0.17643979756879158 / Avg fitness: 0.10188679826375506 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 5 / Worse than parents: 27
+
+Running generation 27
+Best fitness: 0.17643979756879158 / Avg fitness: 0.09878179673443174 / Worst fitness: 6.486687860771986e-16
+Repeated: 6 / Better than parents: 6 / Worse than parents: 28
+
+Running generation 28
+Best fitness: 0.17643979756879158 / Avg fitness: 0.10481713765749412 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 6 / Worse than parents: 26
+
+Running generation 29
+Best fitness: 0.17643979756879158 / Avg fitness: 0.09769802195845084 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 9 / Worse than parents: 26
+
+Running generation 30
+Best fitness: 0.17643979756879158 / Avg fitness: 0.10575178863165156 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 9 / Worse than parents: 25
+
+Running generation 31
+Best fitness: 0.17643979756879158 / Avg fitness: 0.10791904233093447 / Worst fitness: 0.024500827391486863
+Repeated: 4 / Better than parents: 5 / Worse than parents: 27
+
+Running generation 32
+Best fitness: 0.17643979756879158 / Avg fitness: 0.10891376744138158 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 6 / Worse than parents: 26
+
+Running generation 33
+Best fitness: 0.17643979756879158 / Avg fitness: 0.11355106696487217 / Worst fitness: 0.024500827391486863
+Repeated: 0 / Better than parents: 9 / Worse than parents: 22
+
+Running generation 34
+Best fitness: 0.17643979756879158 / Avg fitness: 0.09945331323280464 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 7 / Worse than parents: 20
+
+Running generation 35
+Best fitness: 0.17643979756879158 / Avg fitness: 0.10131808088305133 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 9 / Worse than parents: 22
+
+Running generation 36
+Best fitness: 0.17643979756879158 / Avg fitness: 0.09929068396116358 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 9 / Worse than parents: 25
+
+Testing best individual on the test set
+Achieved fitness: 0.0851524282231633
+Prob crossover: 0.9 / Prob mutation: 0.05 / Tour size: 3 / Pop size: 36 / N Gen: 36
+Initiating population
+Calculating initial fitness
+Initial best fitness: 0.02957915966780385 / Initial avg fitness: 0.0018432636901328052 / Initial worst fitness: 6.486687860771986e-16
+Repeated: 8
+
+Running generation 1
+Best fitness: 0.1331112804841674 / Avg fitness: 0.008583460692413437 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 6 / Worse than parents: 14
+
+Running generation 2
+Best fitness: 0.1331112804841674 / Avg fitness: 0.019147122052821382 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 10 / Worse than parents: 22
+
+Running generation 3
+Best fitness: 0.1331112804841674 / Avg fitness: 0.019492607328382767 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 6 / Worse than parents: 26
+
+Running generation 4
+Best fitness: 0.1331112804841674 / Avg fitness: 0.02896404089692536 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 6 / Worse than parents: 28
+
+Running generation 5
+Best fitness: 0.1331112804841674 / Avg fitness: 0.022654808626089536 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 6 / Worse than parents: 28
+
+Running generation 6
+Best fitness: 0.1331112804841674 / Avg fitness: 0.02949464246425167 / Worst fitness: 6.486687860771986e-16
+Repeated: 4 / Better than parents: 7 / Worse than parents: 29
+
+Running generation 7
+Best fitness: 0.1331112804841674 / Avg fitness: 0.028383180293246497 / Worst fitness: 6.486687860771986e-16
+Repeated: 4 / Better than parents: 7 / Worse than parents: 26
+
+Running generation 8
+Best fitness: 0.1331112804841674 / Avg fitness: 0.037479473158440677 / Worst fitness: 6.486687860771986e-16
+Repeated: 4 / Better than parents: 8 / Worse than parents: 24
+
+Running generation 9
+Best fitness: 0.1331112804841674 / Avg fitness: 0.03258783156335228 / Worst fitness: 6.486687860771986e-16
+Repeated: 3 / Better than parents: 4 / Worse than parents: 26
+
+Running generation 10
+Best fitness: 0.1331112804841674 / Avg fitness: 0.03203371434694821 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 5 / Worse than parents: 29
+
+Running generation 11
+Best fitness: 0.1331112804841674 / Avg fitness: 0.036093072376485485 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 10 / Worse than parents: 26
+
+Running generation 12
+Best fitness: 0.1331112804841674 / Avg fitness: 0.02776320552570478 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 4 / Worse than parents: 27
+
+Running generation 13
+Best fitness: 0.1331112804841674 / Avg fitness: 0.034070698010422944 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 7 / Worse than parents: 25
+
+Running generation 14
+Best fitness: 0.1331112804841674 / Avg fitness: 0.03025936860156142 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 5 / Worse than parents: 28
+
+Running generation 15
+Best fitness: 0.1331112804841674 / Avg fitness: 0.030561266999837005 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 10 / Worse than parents: 23
+
+Running generation 16
+Best fitness: 0.1331112804841674 / Avg fitness: 0.03746934592322855 / Worst fitness: 6.486687860771986e-16
+Repeated: 5 / Better than parents: 8 / Worse than parents: 24
+
+Running generation 17
+Best fitness: 0.1331112804841674 / Avg fitness: 0.03659438889251257 / Worst fitness: 6.486687860771986e-16
+Repeated: 4 / Better than parents: 3 / Worse than parents: 31
+
+Running generation 18
+Best fitness: 0.1331112804841674 / Avg fitness: 0.031877972067724226 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 8 / Worse than parents: 26
+
+Running generation 19
+Best fitness: 0.1331112804841674 / Avg fitness: 0.02281875392874853 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 4 / Worse than parents: 29
+
+Running generation 20
+Best fitness: 0.1331112804841674 / Avg fitness: 0.03457312967969785 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 8 / Worse than parents: 22
+
+Running generation 21
+Best fitness: 0.1331112804841674 / Avg fitness: 0.028645438221361452 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 4 / Worse than parents: 29
+
+Running generation 22
+Best fitness: 0.1331112804841674 / Avg fitness: 0.031151115520108866 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 5 / Worse than parents: 25
+
+Running generation 23
+Best fitness: 0.1331112804841674 / Avg fitness: 0.037450229134130875 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 10 / Worse than parents: 17
+
+Running generation 24
+Best fitness: 0.1331112804841674 / Avg fitness: 0.04310964220000984 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 6 / Worse than parents: 24
+
+Running generation 25
+Best fitness: 0.1331112804841674 / Avg fitness: 0.032721171717705166 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 6 / Worse than parents: 25
+
+Running generation 26
+Best fitness: 0.1331112804841674 / Avg fitness: 0.040636097234128345 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 7 / Worse than parents: 24
+
+Running generation 27
+Best fitness: 0.1331112804841674 / Avg fitness: 0.03999973726425477 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 9 / Worse than parents: 25
+
+Running generation 28
+Best fitness: 0.1331112804841674 / Avg fitness: 0.03287008949708843 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 6 / Worse than parents: 23
+
+Running generation 29
+Best fitness: 0.1331112804841674 / Avg fitness: 0.02294109536787914 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 8 / Worse than parents: 24
+
+Running generation 30
+Best fitness: 0.1331112804841674 / Avg fitness: 0.03674194235132704 / Worst fitness: 6.486687860771986e-16
+Repeated: 3 / Better than parents: 11 / Worse than parents: 21
+
+Running generation 31
+Best fitness: 0.1481765401168343 / Avg fitness: 0.038472703110230336 / Worst fitness: 6.486687860771986e-16
+Repeated: 6 / Better than parents: 5 / Worse than parents: 26
+
+Running generation 32
+Best fitness: 0.1481765401168343 / Avg fitness: 0.027922839706598517 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 5 / Worse than parents: 26
+
+Running generation 33
+Best fitness: 0.1481765401168343 / Avg fitness: 0.03703859658899499 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 8 / Worse than parents: 26
+
+Running generation 34
+Best fitness: 0.1481765401168343 / Avg fitness: 0.03768290231620118 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 6 / Worse than parents: 24
+
+Running generation 35
+Best fitness: 0.1481765401168343 / Avg fitness: 0.03544557973695128 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 4 / Worse than parents: 29
+
+Running generation 36
+Best fitness: 0.1481765401168343 / Avg fitness: 0.028152326063670345 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 6 / Worse than parents: 28
+
+Testing best individual on the test set
+Achieved fitness: 0.19769959815999544
+Prob crossover: 0.9 / Prob mutation: 0.05 / Tour size: 3 / Pop size: 36 / N Gen: 36
+Initiating population
+Calculating initial fitness
+Initial best fitness: 0.05762548824032878 / Initial avg fitness: 0.0030354022623105994 / Initial worst fitness: 6.486687860771986e-16
+Repeated: 8
+
+Running generation 1
+Best fitness: 0.06625756517922202 / Avg fitness: 0.006474177900462066 / Worst fitness: 6.486687860771986e-16
+Repeated: 4 / Better than parents: 5 / Worse than parents: 14
+
+Running generation 2
+Best fitness: 0.06625756517922202 / Avg fitness: 0.00865554593766863 / Worst fitness: 6.486687860771986e-16
+Repeated: 5 / Better than parents: 6 / Worse than parents: 24
+
+Running generation 3
+Best fitness: 0.07190575805002825 / Avg fitness: 0.006965348409049864 / Worst fitness: 6.486687860771986e-16
+Repeated: 4 / Better than parents: 1 / Worse than parents: 25
+
+Running generation 4
+Best fitness: 0.0747390321511062 / Avg fitness: 0.012481849230355157 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 12 / Worse than parents: 18
+
+Running generation 5
+Best fitness: 0.0747390321511062 / Avg fitness: 0.02049760751160691 / Worst fitness: 6.486687860771986e-16
+Repeated: 6 / Better than parents: 12 / Worse than parents: 22
+
+Running generation 6
+Best fitness: 0.0960613170865325 / Avg fitness: 0.02634370937787467 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 8 / Worse than parents: 26
+
+Running generation 7
+Best fitness: 0.0960613170865325 / Avg fitness: 0.023752870734184077 / Worst fitness: 6.486687860771986e-16
+Repeated: 8 / Better than parents: 3 / Worse than parents: 29
+
+Running generation 8
+Best fitness: 0.0960613170865325 / Avg fitness: 0.021894491314396008 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 4 / Worse than parents: 26
+
+Running generation 9
+Best fitness: 0.0960613170865325 / Avg fitness: 0.022553744740420843 / Worst fitness: 6.486687860771986e-16
+Repeated: 4 / Better than parents: 9 / Worse than parents: 26
+
+Running generation 10
+Best fitness: 0.0960613170865325 / Avg fitness: 0.022890023263324916 / Worst fitness: 6.486687860771986e-16
+Repeated: 7 / Better than parents: 5 / Worse than parents: 28
+
+Running generation 11
+Best fitness: 0.0960613170865325 / Avg fitness: 0.028728929705954184 / Worst fitness: 6.486687860771986e-16
+Repeated: 3 / Better than parents: 10 / Worse than parents: 25
+
+Running generation 12
+Best fitness: 0.0960613170865325 / Avg fitness: 0.038681765657470134 / Worst fitness: 6.486687860771986e-16
+Repeated: 6 / Better than parents: 7 / Worse than parents: 24
+
+Running generation 13
+Best fitness: 0.0960613170865325 / Avg fitness: 0.04014035811862539 / Worst fitness: 6.486687860771986e-16
+Repeated: 7 / Better than parents: 10 / Worse than parents: 22
+
+Running generation 14
+Best fitness: 0.0960613170865325 / Avg fitness: 0.03999539345214355 / Worst fitness: 6.486687860771986e-16
+Repeated: 9 / Better than parents: 6 / Worse than parents: 24
+
+Running generation 15
+Best fitness: 0.0960613170865325 / Avg fitness: 0.04120571351455422 / Worst fitness: 6.486687860771986e-16
+Repeated: 4 / Better than parents: 5 / Worse than parents: 23
+
+Running generation 16
+Best fitness: 0.0960613170865325 / Avg fitness: 0.03237490259231738 / Worst fitness: 6.486687860771986e-16
+Repeated: 6 / Better than parents: 3 / Worse than parents: 30
+
+Running generation 17
+Best fitness: 0.0960613170865325 / Avg fitness: 0.02743587294902159 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 6 / Worse than parents: 25
+
+Running generation 18
+Best fitness: 0.107704829007651 / Avg fitness: 0.026761168984627756 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 8 / Worse than parents: 28
+
+Running generation 19
+Best fitness: 0.107704829007651 / Avg fitness: 0.03922528698458508 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 7 / Worse than parents: 25
+
+Running generation 20
+Best fitness: 0.107704829007651 / Avg fitness: 0.03550899979257413 / Worst fitness: 6.486687860771986e-16
+Repeated: 7 / Better than parents: 5 / Worse than parents: 26
+
+Running generation 21
+Best fitness: 0.107704829007651 / Avg fitness: 0.052561404682176946 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 11 / Worse than parents: 23
+
+Running generation 22
+Best fitness: 0.107704829007651 / Avg fitness: 0.06099663831063783 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 9 / Worse than parents: 23
+
+Running generation 23
+Best fitness: 0.11914944604218713 / Avg fitness: 0.06296717971043307 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 7 / Worse than parents: 25
+
+Running generation 24
+Best fitness: 0.11914944604218713 / Avg fitness: 0.06194584911381002 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 6 / Worse than parents: 22
+
+Running generation 25
+Best fitness: 0.11914944604218713 / Avg fitness: 0.05008077134528152 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 5 / Worse than parents: 27
+
+Running generation 26
+Best fitness: 0.11914944604218713 / Avg fitness: 0.05749627832333285 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 8 / Worse than parents: 21
+
+Running generation 27
+Best fitness: 0.11914944604218713 / Avg fitness: 0.07255613541787861 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 8 / Worse than parents: 25
+
+Running generation 28
+Best fitness: 0.11914944604218713 / Avg fitness: 0.0757206064349828 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 12 / Worse than parents: 22
+
+Running generation 29
+Best fitness: 0.11914944604218713 / Avg fitness: 0.07730204545315975 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 6 / Worse than parents: 26
+
+Running generation 30
+Best fitness: 0.11914944604218713 / Avg fitness: 0.06935774666576727 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 9 / Worse than parents: 25
+
+Running generation 31
+Best fitness: 0.1638964857340963 / Avg fitness: 0.07899425625681966 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 7 / Worse than parents: 21
+
+Running generation 32
+Best fitness: 0.1638964857340963 / Avg fitness: 0.06732458960928328 / Worst fitness: 6.486687860771986e-16
+Repeated: 2 / Better than parents: 4 / Worse than parents: 26
+
+Running generation 33
+Best fitness: 0.1638964857340963 / Avg fitness: 0.07276647930691761 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 4 / Worse than parents: 27
+
+Running generation 34
+Best fitness: 0.1638964857340963 / Avg fitness: 0.06363664666355115 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 7 / Worse than parents: 19
+
+Running generation 35
+Best fitness: 0.1638964857340963 / Avg fitness: 0.08382000127633048 / Worst fitness: 6.486687860771986e-16
+Repeated: 4 / Better than parents: 7 / Worse than parents: 23
+
+Running generation 36
+Best fitness: 0.1638964857340963 / Avg fitness: 0.07400749723662574 / Worst fitness: 6.486687860771986e-16
+Repeated: 0 / Better than parents: 7 / Worse than parents: 24
+
+Testing best individual on the test set
+Achieved fitness: 0.04542354549283562

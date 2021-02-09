@@ -253,6 +253,8 @@ def run_for_database(file_name, prob_crossover, prob_mutation, tour_size, pop_si
         'max': max,
         'min': min
     }
+    
+    print('Prob crossover: {} / Prob mutation: {} / Tour size: {} / Pop size: {} / N Gen: {}'. format(prob_crossover, prob_mutation, tour_size, pop_size, n_gen))
 
     tree_max_depth = 7
 
@@ -356,11 +358,7 @@ def test_result(file_name, func_set, operations, best_ind):
     print('Achieved fitness: {}'.format(best_ind.fitness))
     
 
-if __name__ == "__main__" :
-    start = timeit.default_timer()
-    run_for_database(file_name='data/breast_cancer_coimbra_train.csv', prob_crossover=0.9, prob_mutation=0.05, tour_size=3, pop_size=60, n_gen=20)
-    stop = timeit.default_timer()
+if __name__ == "__main__" :   
+    db = 'data/glass_train.csv'
 
-    print('Time: ', stop - start)
-
-    # run_for_database(file_name='data/glass_train.csv', prob_crossover=0.9, prob_mutation=0.05, tour_size=3, pop_size=60, n_gen=100)
+    run_for_database(file_name=db, prob_crossover=0.6, prob_mutation=0.3, tour_size=2, pop_size=24, n_gen=24)
