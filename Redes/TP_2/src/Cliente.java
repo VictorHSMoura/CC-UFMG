@@ -95,40 +95,50 @@ public class Cliente {
             int ackNumber = -1;
             boolean lastMessageFlag = false;
             boolean lastIsAcked = false;
-            boolean endOfCommunication = false; //
+            boolean endOfCommunication = false;
+            boolean retransmit = false;
             int lastAcked = -1;
 
-            int windowSize = 128;
+            int windowSize = 64;
             int payloadSize = 1000;
             Vector<byte[]> sentMessageList = new Vector<>();
             Random randomNumber = new Random();
 
-            for (int i=0; i < fileByteArray.length; i = i+payloadSize) {
-                if ((i+payloadSize) >= fileByteArray.length) {
-                    payloadSize = fileByteArray.length - i;
-                    lastMessageFlag = true;
+            int i = 0;
+            while (i < fileByteArray.length) {
+                try {
+                    header = sentMessageList.get(sequenceNumber);
+                    retransmit = false;
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    int msgSize = payloadSize;
+                    if ((i+payloadSize) >= fileByteArray.length) {
+                        msgSize = fileByteArray.length - i;
+                        lastMessageFlag = true;
+                    }
+
+                    sentMessageID = 6;
+                    messageID = ByteBuffer.allocate(2).putShort((short) sentMessageID).array();
+
+                    byte[] sequenceNumberInBytes = ByteBuffer.allocate(4).putInt(sequenceNumber).array();
+
+                    byte[] payloadSizeInBytes = ByteBuffer.allocate(2).putShort((short) msgSize).array();
+
+                    header = new byte[messageID.length + sequenceNumberInBytes.length + payloadSizeInBytes.length + msgSize];
+
+                    System.arraycopy(messageID, 0, header, 0, messageID.length);
+                    System.arraycopy(sequenceNumberInBytes, 0, header, messageID.length, sequenceNumberInBytes.length);
+                    System.arraycopy(payloadSizeInBytes, 0, header,
+                            (messageID.length + sequenceNumberInBytes.length), payloadSizeInBytes.length);
+                    System.arraycopy(fileByteArray, i, header,
+                            (messageID.length + sequenceNumberInBytes.length + payloadSizeInBytes.length),
+                            msgSize);
+
+                    // Add the message to the sent message list
+                    sentMessageList.add(header);
                 }
-
-                sentMessageID = 6;
-                messageID = ByteBuffer.allocate(2).putShort((short) sentMessageID).array();
-
-                byte[] sequenceNumberInBytes = ByteBuffer.allocate(4).putInt(sequenceNumber).array();
-
-                byte[] payloadSizeInBytes = ByteBuffer.allocate(2).putShort((short) payloadSize).array();
-
-                header = new byte[messageID.length + sequenceNumberInBytes.length + payloadSizeInBytes.length + payloadSize];
-
-                System.arraycopy(messageID, 0, header, 0, messageID.length);
-                System.arraycopy(sequenceNumberInBytes, 0, header, messageID.length, sequenceNumberInBytes.length);
-                System.arraycopy(payloadSizeInBytes, 0, header,
-                        (messageID.length + sequenceNumberInBytes.length), payloadSizeInBytes.length);
-                System.arraycopy(fileByteArray, i, header,
-                        (messageID.length + sequenceNumberInBytes.length + payloadSizeInBytes.length),
-                        payloadSize);
+                i += payloadSize;
 
                 DatagramPacket sendPacket = new DatagramPacket(header, header.length, ip, UDPPort);
-                // Add the message to the sent message list
-                sentMessageList.add(header);
 
                 while (true) {
                     if ((sequenceNumber - windowSize) > lastAcked) {
@@ -140,7 +150,7 @@ public class Cliente {
                             byte[] ack = new byte[6];
 
                             try {
-                                clientSocket.setSoTimeout(50);
+                                clientSocket.setSoTimeout(10);
                                 is.read(ack, 0, ack.length);
                                 receivedMessageID = ByteBuffer.wrap(Arrays.copyOfRange(ack, 0, 2)).getShort();
                                 ackNumber = ByteBuffer.wrap(Arrays.copyOfRange(ack, 2, 6)).getInt();
@@ -157,20 +167,11 @@ public class Cliente {
                                 System.out.println("Ack received for packet = " + ackNumber);
 //                                break;
                             } else {
-                                for (int packInd = 0; packInd != (sequenceNumber - lastAcked); packInd++) {
-                                    byte[] retryMessage = new byte[1024];
-                                    int ind;
-                                    if(lastAcked == -1) //error on the first packet
-                                        ind = packInd;
-                                    else
-                                        ind = packInd + lastAcked;
-
-                                    retryMessage = sentMessageList.get(ind);
-                                    System.out.println("Resending: Sequence Number = " + (ind));
-
-                                    DatagramPacket retryPacket = new DatagramPacket(retryMessage, retryMessage.length, ip, UDPPort);
-                                    udpSocket.send(retryPacket);
-                                }
+                                // resetting window to retransmit
+                                i = (lastAcked + 1) * payloadSize;
+                                sequenceNumber = lastAcked;
+                                retransmit = true;
+                                break;
                             }
                         }
                     } else {
@@ -178,11 +179,12 @@ public class Cliente {
                     }
                 }
 
-                if(randomNumber.nextInt(10) <= 3) {
-                    // Package the message
-                    udpSocket.send(sendPacket);
-                    System.out.println("Sent: Sequence number = " + sequenceNumber + " - Size: " + payloadSize);
-                }
+                if(!retransmit)
+                    if(randomNumber.nextInt(10) != 0) {
+                        // Package the message
+                        udpSocket.send(sendPacket);
+                        System.out.println("Sent: Sequence number = " + sequenceNumber + " - Size: " + payloadSize);
+                    }
 
 
                 // Check for acknowledgements
@@ -191,7 +193,7 @@ public class Cliente {
                     byte[] ack = new byte[6];
 
                     try {
-                        clientSocket.setSoTimeout(10);
+                        clientSocket.setSoTimeout(5);
                         int bytes = is.read(ack, 0, ack.length);
                         receivedMessageID = ByteBuffer.wrap(Arrays.copyOfRange(ack, 0, 2)).getShort();
                         ackNumber = ByteBuffer.wrap(Arrays.copyOfRange(ack, 2, 6)).getInt();
