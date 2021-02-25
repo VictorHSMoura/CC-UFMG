@@ -14,7 +14,7 @@ public class Servidor {
             DataInputStream serverInput = new DataInputStream(clientConn.getInputStream());
             DataOutputStream serverOutput = new DataOutputStream(clientConn.getOutputStream());
 
-            byte[] receivedData = new byte[1024];
+            byte[] receivedData = new byte[32];
             byte[] header;
 
             byte[] messageID;
@@ -66,8 +66,10 @@ public class Servidor {
             }
 
             DatagramSocket clientSocket = new DatagramSocket(clientPort);
-            File file = new File("arquivo-recebido.txt");
-            file.createNewFile();
+            String destinyFile = (fileName.substring(0, fileName.indexOf(".")) + "_received"
+                    + fileName.substring(fileName.indexOf("."))).trim();
+
+            File file = new File(destinyFile);
             FileOutputStream fileOutput = new FileOutputStream(file);
 
             boolean lastMessageFlag = false;
@@ -80,6 +82,7 @@ public class Servidor {
             if (fileSize % packetSize != 0)
                 numberOfPackets++;
 
+            System.out.println(numberOfPackets);
             while (!lastMessageFlag) {
                 byte[] message = new byte[1024];
                 byte[] fileByteArray = new byte[packetSize];
@@ -93,33 +96,59 @@ public class Servidor {
                 packetSize = ByteBuffer.wrap(Arrays.copyOfRange(message, 6, 8)).getShort();
 
 
-                if (sequenceNumber == numberOfPackets - 1) {
-                    lastMessageFlag = true;
-                } else {
-                    lastMessageFlag = false;
-                }
                 if (sequenceNumber == (lastSequenceNumber + 1)) {
                     lastSequenceNumber = sequenceNumber;
 
                     fileByteArray = Arrays.copyOfRange(message, 8, 8 + packetSize);
 
                     fileOutput.write(fileByteArray);
-                    System.out.println("Received: Sequence number = " + sequenceNumber);
-                    if (lastMessageFlag) {
+                    System.out.println("Received: Sequence number = " + sequenceNumber + " - Size: " + packetSize);
+
+                    sendAck(lastSequenceNumber, serverOutput);
+                    if (sequenceNumber == numberOfPackets - 1) {
+                        byte[] endMessage = new byte[2];
+
+                        messageID = ByteBuffer.allocate(2).putShort((short) 5).array();
+                        System.arraycopy(messageID, 0, endMessage, 0, messageID.length);
+
+                        System.out.println("File received.");
+                        System.out.println("Sending END message.");
+                        lastMessageFlag = true;
+
+                        serverOutput.write(endMessage);
                         fileOutput.close();
+                    }
+                } else {
+                    if (sequenceNumber < (lastSequenceNumber + 1)) {
+                        // Send acknowledgement for received packet
+                        sendAck(sequenceNumber, serverOutput);
+                    } else {
+                        // Resend acknowledgement for last packet received
+                        sendAck(lastSequenceNumber, serverOutput);
                     }
                 }
             }
 
             clientSocket.close();
-            System.out.println("File received.");
-            System.out.println("Client " + clientConn + " sends exit...");
-            System.out.println("Closing connection.");
+            System.out.println("Closing connection " + clientConn);
             clientConn.close();
             System.out.println("Connection closed");
 
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void sendAck(int lastSequenceNumber, DataOutputStream serverOutput) throws IOException {
+        byte[] ackPacket = new byte[6];
+
+        byte[] messageID = ByteBuffer.allocate(2).putShort((short) 7).array();
+        byte[] sequenceNumber = ByteBuffer.allocate(4).putInt(lastSequenceNumber).array();
+
+        System.arraycopy(messageID, 0, ackPacket, 0, messageID.length);
+        System.arraycopy(sequenceNumber, 0, ackPacket, messageID.length, sequenceNumber.length);
+
+        serverOutput.write(ackPacket);
+        System.out.println("Sent ack: Sequence Number = " + lastSequenceNumber);
     }
 }
