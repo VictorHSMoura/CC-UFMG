@@ -104,7 +104,7 @@ class ClientThread extends Thread {
     }
 
     public void receiveFile(String fileName, long fileSize, DatagramSocket clientSocket) throws IOException {
-        String destinyFile = (fileName.substring(0, fileName.indexOf(".")) + "_recebido"
+        String destinyFile = (fileName.substring(0, fileName.indexOf(".")) + "-recebido"
                 + fileName.substring(fileName.indexOf("."))).trim();
 
         File file = new File(destinyFile);
