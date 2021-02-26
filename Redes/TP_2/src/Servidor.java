@@ -6,34 +6,77 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 public class Servidor {
-    public final static int SERVICE_PORT=51551;
-
     public static void main(String[] args) {
+        if (args.length != 1) {
+            System.err.println("Incorrect number of arguments.");
+            System.err.println("usage: java Servidor <server port> ");
+            System.err.println("example: java Servidor 51551");
+            return;
+        }
+        int tcpPort;
         try {
-            ServerSocket server = new ServerSocket(SERVICE_PORT);
-            Socket clientConn = server.accept();
-            DataInputStream serverInput = new DataInputStream(clientConn.getInputStream());
-            DataOutputStream serverOutput = new DataOutputStream(clientConn.getOutputStream());
+            tcpPort = Integer.parseInt(args[0]);
+        } catch (NumberFormatException e) {
+            System.err.println("The port number needs to be a integer.");
+            return;
+        }
 
-            byte[] receivedData = new byte[32];
-            byte[] header;
+        ServerSocket server;
+        try {
+            server = new ServerSocket(tcpPort);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+        while (true) {
+            try {
+                Socket clientConn = server.accept();
+                System.out.println("New client connected: " + clientConn);
 
-            byte[] messageID;
-            int receivedMessageID = 0;
-            int sentMessageID;
-            int messageSize = 0;
-            int clientPort = 54321; // need to change this
+                DataInputStream serverInput = new DataInputStream(clientConn.getInputStream());
+                DataOutputStream serverOutput = new DataOutputStream(clientConn.getOutputStream());
 
-            long fileSize = 3;
-            String fileName = "default-file.txt";
+                Thread clientThread = new ClientThread(clientConn, serverInput, serverOutput);
+                clientThread.start();
+            } catch(Exception e){
+                e.printStackTrace();
+            }
+        }
+    }
+}
 
-            DatagramSocket clientSocket = null;
+class ClientThread extends Thread {
+    final Socket clientConn;
+    final DataInputStream serverInput;
+    final DataOutputStream serverOutput;
 
+    public ClientThread(Socket clientConn, DataInputStream serverInput, DataOutputStream serverOutput) {
+        this.clientConn = clientConn;
+        this.serverInput = serverInput;
+        this.serverOutput = serverOutput;
+    }
+
+    @Override
+    public void run() {
+        byte[] receivedData = new byte[32];
+        byte[] header;
+
+        byte[] messageID;
+        int receivedMessageID = 0;
+        int sentMessageID;
+        int messageSize;
+        int clientPort;
+
+        long fileSize = 3;
+        String fileName = "default-file.txt";
+
+        DatagramSocket clientSocket = null;
+        try {
             while (receivedMessageID != 3) {
                 // receiving client messages
                 messageSize = serverInput.read(receivedData, 0, receivedData.length);
 
-                receivedMessageID = (int) ByteBuffer.wrap(Arrays.copyOfRange(receivedData, 0, 2)).getShort();
+                receivedMessageID = ByteBuffer.wrap(Arrays.copyOfRange(receivedData, 0, 2)).getShort();
 
                 switch (receivedMessageID) {
                     case 1: // hello message
@@ -71,51 +114,50 @@ public class Servidor {
             }
 
 
-            String destinyFile = (fileName.substring(0, fileName.indexOf(".")) + "_received"
+            String destinyFile = (fileName.substring(0, fileName.indexOf(".")) + "_recebido"
                     + fileName.substring(fileName.indexOf("."))).trim();
 
             File file = new File(destinyFile);
             FileOutputStream fileOutput = new FileOutputStream(file);
 
             boolean lastMessageFlag = false;
-            int sequenceNumber = 0;
+            int sequenceNumber;
             int lastSequenceNumber = -1;
-            int payloadSize = 0;
-            int packetSize = 1000;
+            int payloadSize = 1000;
             int windowSize = 64;
-            int numberOfPackets = (int) (fileSize/packetSize);
+            int numberOfPackets = (int) (fileSize/payloadSize);
 
-            if (fileSize % packetSize != 0)
+            if (fileSize % payloadSize != 0)
                 numberOfPackets++;
 
-            HashMap<Integer, byte[]> packetsReceived = new HashMap<Integer, byte[]>();
+            HashMap<Integer, byte[]> packetsReceived = new HashMap<>();
 
             while (!lastMessageFlag) {
                 byte[] message = new byte[1024];
-                byte[] fileByteArray = new byte[packetSize];
+                byte[] fileByteArray;
                 DatagramPacket receivedPacket = new DatagramPacket(message, message.length);
                 clientSocket.setSoTimeout(0);
                 clientSocket.receive(receivedPacket);
 
                 message = receivedPacket.getData();
-                receivedMessageID = (int) ByteBuffer.wrap(Arrays.copyOfRange(message, 0, 2)).getShort();
+                receivedMessageID = ByteBuffer.wrap(Arrays.copyOfRange(message, 0, 2)).getShort();
                 sequenceNumber = ByteBuffer.wrap(Arrays.copyOfRange(message, 2, 6)).getInt();
-                packetSize = ByteBuffer.wrap(Arrays.copyOfRange(message, 6, 8)).getShort();
-                fileByteArray = Arrays.copyOfRange(message, 8, 8 + packetSize);
+                payloadSize = ByteBuffer.wrap(Arrays.copyOfRange(message, 6, 8)).getShort();
+                fileByteArray = Arrays.copyOfRange(message, 8, 8 + payloadSize);
 
 
                 if (sequenceNumber == (lastSequenceNumber + 1)) {
                     lastSequenceNumber = sequenceNumber;
 
                     fileOutput.write(fileByteArray);
-                    System.out.println("Received: Sequence number = " + sequenceNumber + " - Size: " + packetSize);
+                    System.out.println("Received: Sequence number = " + sequenceNumber + " - Size: " + payloadSize);
 
                     sendAck(lastSequenceNumber, serverOutput);
 
                     int lastUntilNow = lastSequenceNumber;
                     for(int i = lastUntilNow + 1; i < lastUntilNow + windowSize && i < numberOfPackets -1; i++) {
                         if(packetsReceived.get(i) == null) {
-                           break;
+                            break;
                         }
                         fileOutput.write(packetsReceived.get(i));
                         sendAck(i, serverOutput);
@@ -159,7 +201,6 @@ public class Servidor {
             e.printStackTrace();
         }
     }
-
     public static void sendAck(int lastSequenceNumber, DataOutputStream serverOutput) throws IOException {
         byte[] ackPacket = new byte[6];
 

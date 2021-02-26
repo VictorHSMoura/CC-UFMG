@@ -1,17 +1,14 @@
 import java.io.*;
 import java.net.*;
 import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.Vector;
 
 public class Cliente {
-    public final static int SERVICE_PORT = 51551;
-
     public static void main(String[] args) {
         if (args.length != 3) {
-            System.err.println("Incorrect number of arguments");
+            System.err.println("Incorrect number of arguments.");
             return;
         }
         String serverIP = args[0];
@@ -21,7 +18,7 @@ public class Cliente {
         try {
             port = Integer.parseInt(args[1]);
         } catch (NumberFormatException e) {
-            System.err.println("The port number needs to be a integer");
+            System.err.println("The port number needs to be a integer.");
             return;
         }
 
@@ -30,7 +27,7 @@ public class Cliente {
         boolean asciiChar = fileName.matches("\\A\\p{ASCII}*\\z");
 
         if (firstIndex != lastIndex || firstIndex == -1 || !asciiChar) {
-            System.err.println("Filename not permitted");
+            System.err.println("Filename not permitted.");
             return;
         }
 
@@ -62,8 +59,8 @@ public class Cliente {
             while (receivedMessageID != 4) {
                 out.write(header);
 
-                int messageSize = is.read(receivedData, 0, receivedData.length);
-                receivedMessageID = (int) ByteBuffer.wrap(Arrays.copyOfRange(receivedData, 0, 2)).getShort();
+                is.read(receivedData, 0, receivedData.length);
+                receivedMessageID = ByteBuffer.wrap(Arrays.copyOfRange(receivedData, 0, 2)).getShort();
 
                 switch (receivedMessageID) {
                     case 2:
@@ -90,11 +87,9 @@ public class Cliente {
                         break;
                 }
             }
-            Thread.sleep(50); //Evita condição de corrida
+            Thread.sleep(50);
             int sequenceNumber = 0;
             int ackNumber = -1;
-            boolean lastMessageFlag = false;
-            boolean lastIsAcked = false;
             boolean endOfCommunication = false;
             boolean retransmit = false;
             int lastAcked = -1;
@@ -104,7 +99,7 @@ public class Cliente {
             Vector<byte[]> sentMessageList = new Vector<>();
             Random randomNumber = new Random();
 
-            int numberOfPackets = (int) (fileByteArray.length/payloadSize);
+            int numberOfPackets = (fileByteArray.length/payloadSize);
 
             if (fileByteArray.length % payloadSize != 0)
                 numberOfPackets++;
@@ -119,7 +114,6 @@ public class Cliente {
                         int msgSize = payloadSize;
                         if ((i + payloadSize) >= fileByteArray.length) {
                             msgSize = fileByteArray.length - i;
-                            lastMessageFlag = true;
                         }
 
                         sentMessageID = 6;
@@ -152,7 +146,7 @@ public class Cliente {
                 while (true) {
                     if ((sequenceNumber - windowSize) > lastAcked) {
                         boolean correctPacket = false;
-                        boolean ackReceived = false;
+                        boolean ackReceived;
 
 
                         while (!correctPacket) {
@@ -161,7 +155,6 @@ public class Cliente {
                             try {
                                 clientSocket.setSoTimeout(10);
                                 is.read(ack, 0, ack.length);
-                                receivedMessageID = ByteBuffer.wrap(Arrays.copyOfRange(ack, 0, 2)).getShort();
                                 ackNumber = ByteBuffer.wrap(Arrays.copyOfRange(ack, 2, 6)).getInt();
                                 ackReceived = true;
                             } catch (SocketTimeoutException e) {
@@ -174,12 +167,12 @@ public class Cliente {
                                 }
                                 correctPacket = true;
                                 System.out.println("Ack received for packet = " + ackNumber);
-//                                break;
                             } else {
                                 // resetting window to retransmit
                                 i = (lastAcked + 1) * payloadSize;
                                 sequenceNumber = lastAcked;
                                 retransmit = true;
+                                System.out.println("Retransmitting from packet " + (sequenceNumber + 1));
                                 break;
                             }
                         }
@@ -198,7 +191,6 @@ public class Cliente {
 
                 // Check for acknowledgements
                 while (true) {
-                    boolean ackReceived = false;
                     byte[] ack = new byte[6];
 
                     try {
@@ -211,20 +203,13 @@ public class Cliente {
                                 endOfCommunication = true;
                             break;
                         }
-                        ackReceived = true;
                     } catch (SocketTimeoutException e) {
-                        ackReceived = false;
                         break;
                     }
 
-                    // Note any acknowledgements and move window forward
-                    if (ackReceived) {
-                        if (ackNumber >= (lastAcked + 1)) {
-                            lastAcked = ackNumber;
-                            System.out.println("Ack received for packet = " + ackNumber);
-                        }
-                    } else {
-                        break;
+                    if (ackNumber >= (lastAcked + 1)) {
+                        lastAcked = ackNumber;
+                        System.out.println("Ack received for packet = " + ackNumber);
                     }
                 }
 
