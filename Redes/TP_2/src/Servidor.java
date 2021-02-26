@@ -56,16 +56,137 @@ class ClientThread extends Thread {
         this.serverOutput = serverOutput;
     }
 
+    public DatagramSocket allocatePort() throws IOException{
+        DatagramSocket clientSocket = new DatagramSocket();
+        int clientPort = clientSocket.getLocalPort();
+        byte[] portInBytes = ByteBuffer.allocate(4).putInt(clientPort).array();
+
+        System.out.println("Port allocated: " + clientPort);
+        int sentMessageID = 2;
+        byte[] messageID = ByteBuffer.allocate(2).putShort((short) sentMessageID).array();
+
+        byte[] header = new byte[messageID.length + portInBytes.length];
+        System.arraycopy(messageID, 0, header, 0, messageID.length);
+        System.arraycopy(portInBytes, 0, header, messageID.length, portInBytes.length);
+        serverOutput.write(header);
+
+        return clientSocket;
+    }
+
+    public Tuple2<String, Long> getFileInfo(byte[] receivedData, int messageSize) throws IOException {
+        byte[] fileNameInBytes = Arrays.copyOfRange(receivedData, 2, 17);
+        String fileName = new String(fileNameInBytes, StandardCharsets.UTF_8);
+        long fileSize = ByteBuffer.wrap(Arrays.copyOfRange(receivedData, 17, messageSize)).getLong();
+        System.out.println("File info - Name: " + fileName + " - Size (in bytes): " + fileSize);
+
+        System.out.println("Allocating memory for the file");
+
+        // sending ok message
+        int sentMessageID = 4;
+        byte[] header = ByteBuffer.allocate(2).putShort((short) sentMessageID).array();
+        System.out.println("Ready to receive file upload");
+        serverOutput.write(header);
+
+        return new Tuple2<>(fileName, fileSize);
+    }
+
+    public static void sendAck(int lastSequenceNumber, DataOutputStream serverOutput) throws IOException {
+        byte[] ackPacket = new byte[6];
+
+        byte[] messageID = ByteBuffer.allocate(2).putShort((short) 7).array();
+        byte[] sequenceNumber = ByteBuffer.allocate(4).putInt(lastSequenceNumber).array();
+
+        System.arraycopy(messageID, 0, ackPacket, 0, messageID.length);
+        System.arraycopy(sequenceNumber, 0, ackPacket, messageID.length, sequenceNumber.length);
+
+        serverOutput.write(ackPacket);
+        System.out.println("Sent ack: Sequence Number = " + lastSequenceNumber);
+    }
+
+    public void receiveFile(String fileName, long fileSize, DatagramSocket clientSocket) throws IOException {
+        String destinyFile = (fileName.substring(0, fileName.indexOf(".")) + "_recebido"
+                + fileName.substring(fileName.indexOf("."))).trim();
+
+        File file = new File(destinyFile);
+        FileOutputStream fileOutput = new FileOutputStream(file);
+
+        boolean lastMessageFlag = false;
+        int sequenceNumber;
+        int lastSequenceNumber = -1;
+        int payloadSize = 1000;
+        int windowSize = 64;
+        int numberOfPackets = (int) (fileSize/payloadSize);
+
+        if (fileSize % payloadSize != 0)
+            numberOfPackets++;
+
+        HashMap<Integer, byte[]> packetsReceived = new HashMap<>();
+
+        while (!lastMessageFlag) {
+            byte[] header = new byte[1024];
+            byte[] fileByteArray;
+            DatagramPacket receivedPacket = new DatagramPacket(header, header.length);
+            clientSocket.setSoTimeout(0);
+            clientSocket.receive(receivedPacket);
+
+            header = receivedPacket.getData();
+
+            sequenceNumber = ByteBuffer.wrap(Arrays.copyOfRange(header, 2, 6)).getInt();
+            payloadSize = ByteBuffer.wrap(Arrays.copyOfRange(header, 6, 8)).getShort();
+            fileByteArray = Arrays.copyOfRange(header, 8, 8 + payloadSize);
+
+
+            if (sequenceNumber == (lastSequenceNumber + 1)) {
+                lastSequenceNumber = sequenceNumber;
+
+                fileOutput.write(fileByteArray);
+                System.out.println("Received: Sequence number = " + sequenceNumber + " - Size: " + payloadSize);
+
+                sendAck(lastSequenceNumber, serverOutput);
+
+                int lastUntilNow = lastSequenceNumber;
+                for(int i = lastUntilNow + 1; i < lastUntilNow + windowSize && i < numberOfPackets -1; i++) {
+                    if(packetsReceived.get(i) == null) {
+                        break;
+                    }
+                    fileOutput.write(packetsReceived.get(i));
+                    sendAck(i, serverOutput);
+                    packetsReceived.remove(i);
+                    lastSequenceNumber = i;
+                }
+                if (sequenceNumber == numberOfPackets - 1) {
+                    byte[] endMessage = new byte[2];
+
+                    byte[] messageID = ByteBuffer.allocate(2).putShort((short) 5).array();
+                    System.arraycopy(messageID, 0, endMessage, 0, messageID.length);
+
+                    System.out.println("File received.");
+                    System.out.println("Sending END message.");
+                    lastMessageFlag = true;
+
+                    serverOutput.write(endMessage);
+                    fileOutput.close();
+                }
+            } else {
+                if (sequenceNumber < (lastSequenceNumber + 1)) {
+                    // Send acknowledgement for received packet
+                    sendAck(sequenceNumber, serverOutput);
+                } else {
+                    // Resend acknowledgement for last packet received
+                    sendAck(lastSequenceNumber, serverOutput);
+
+                    packetsReceived.put(sequenceNumber, fileByteArray);
+                }
+            }
+        }
+    }
+
     @Override
     public void run() {
         byte[] receivedData = new byte[32];
-        byte[] header;
 
-        byte[] messageID;
         int receivedMessageID = 0;
-        int sentMessageID;
         int messageSize;
-        int clientPort;
 
         long fileSize = 3;
         String fileName = "default-file.txt";
@@ -82,117 +203,19 @@ class ClientThread extends Thread {
                     case 1: // hello message
                         System.out.println("Hello message received. Allocating client port");
 
-                        clientSocket = new DatagramSocket();
-                        clientPort = clientSocket.getLocalPort();
-                        byte[] portInBytes = ByteBuffer.allocate(4).putInt(clientPort).array();
-
-                        System.out.println("Port allocated: " + clientPort);
-                        sentMessageID = 2;
-                        messageID = ByteBuffer.allocate(2).putShort((short) sentMessageID).array();
-
-                        header = new byte[messageID.length + portInBytes.length];
-                        System.arraycopy(messageID, 0, header, 0, messageID.length);
-                        System.arraycopy(portInBytes, 0, header, messageID.length, portInBytes.length);
-                        serverOutput.write(header);
+                        clientSocket = allocatePort();
                         break;
                     case 3:
-                        byte[] fileNameInBytes = Arrays.copyOfRange(receivedData, 2, 17);
-                        fileName = new String(fileNameInBytes, StandardCharsets.UTF_8);
-                        fileSize = ByteBuffer.wrap(Arrays.copyOfRange(receivedData, 17, messageSize)).getLong();
-                        System.out.println("File info - Name: " + fileName + " - Size (in bytes): " + fileSize);
-
-                        System.out.println("Allocating memory for the file");
-
-                        // sending ok message
-                        sentMessageID = 4;
-                        messageID = ByteBuffer.allocate(2).putShort((short) sentMessageID).array();
-                        header = messageID;
-                        System.out.println("Ready to receive file upload");
-                        serverOutput.write(header);
+                        Tuple2<String, Long> fileData = getFileInfo(receivedData, messageSize);
+                        fileName = fileData.getFirst();
+                        fileSize = fileData.getSecond();
                         break;
                 }
             }
 
+            receiveFile(fileName, fileSize, clientSocket);
 
-            String destinyFile = (fileName.substring(0, fileName.indexOf(".")) + "_recebido"
-                    + fileName.substring(fileName.indexOf("."))).trim();
-
-            File file = new File(destinyFile);
-            FileOutputStream fileOutput = new FileOutputStream(file);
-
-            boolean lastMessageFlag = false;
-            int sequenceNumber;
-            int lastSequenceNumber = -1;
-            int payloadSize = 1000;
-            int windowSize = 64;
-            int numberOfPackets = (int) (fileSize/payloadSize);
-
-            if (fileSize % payloadSize != 0)
-                numberOfPackets++;
-
-            HashMap<Integer, byte[]> packetsReceived = new HashMap<>();
-
-            while (!lastMessageFlag) {
-                byte[] message = new byte[1024];
-                byte[] fileByteArray;
-                DatagramPacket receivedPacket = new DatagramPacket(message, message.length);
-                clientSocket.setSoTimeout(0);
-                clientSocket.receive(receivedPacket);
-
-                message = receivedPacket.getData();
-                receivedMessageID = ByteBuffer.wrap(Arrays.copyOfRange(message, 0, 2)).getShort();
-                sequenceNumber = ByteBuffer.wrap(Arrays.copyOfRange(message, 2, 6)).getInt();
-                payloadSize = ByteBuffer.wrap(Arrays.copyOfRange(message, 6, 8)).getShort();
-                fileByteArray = Arrays.copyOfRange(message, 8, 8 + payloadSize);
-
-
-                if (sequenceNumber == (lastSequenceNumber + 1)) {
-                    lastSequenceNumber = sequenceNumber;
-
-                    fileOutput.write(fileByteArray);
-                    System.out.println("Received: Sequence number = " + sequenceNumber + " - Size: " + payloadSize);
-
-                    sendAck(lastSequenceNumber, serverOutput);
-
-                    int lastUntilNow = lastSequenceNumber;
-                    for(int i = lastUntilNow + 1; i < lastUntilNow + windowSize && i < numberOfPackets -1; i++) {
-                        if(packetsReceived.get(i) == null) {
-                            break;
-                        }
-                        fileOutput.write(packetsReceived.get(i));
-                        sendAck(i, serverOutput);
-                        packetsReceived.remove(i);
-                        lastSequenceNumber = i;
-                    }
-                    if (sequenceNumber == numberOfPackets - 1) {
-                        byte[] endMessage = new byte[2];
-
-                        messageID = ByteBuffer.allocate(2).putShort((short) 5).array();
-                        System.arraycopy(messageID, 0, endMessage, 0, messageID.length);
-
-                        System.out.println("File received.");
-                        System.out.println("Sending END message.");
-                        lastMessageFlag = true;
-
-                        serverOutput.write(endMessage);
-                        fileOutput.close();
-                    }
-                } else {
-                    if (sequenceNumber < (lastSequenceNumber + 1)) {
-                        // Send acknowledgement for received packet
-                        sendAck(sequenceNumber, serverOutput);
-                    } else {
-                        // Resend acknowledgement for last packet received
-                        sendAck(lastSequenceNumber, serverOutput);
-
-                        packetsReceived.put(sequenceNumber, fileByteArray);
-                    }
-                }
-            }
-
-
-
-            clientSocket.close();
+            if (clientSocket != null) clientSocket.close();
             System.out.println("Closing connection " + clientConn);
             clientConn.close();
             System.out.println("Connection closed");
@@ -200,17 +223,5 @@ class ClientThread extends Thread {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-    public static void sendAck(int lastSequenceNumber, DataOutputStream serverOutput) throws IOException {
-        byte[] ackPacket = new byte[6];
-
-        byte[] messageID = ByteBuffer.allocate(2).putShort((short) 7).array();
-        byte[] sequenceNumber = ByteBuffer.allocate(4).putInt(lastSequenceNumber).array();
-
-        System.arraycopy(messageID, 0, ackPacket, 0, messageID.length);
-        System.arraycopy(sequenceNumber, 0, ackPacket, messageID.length, sequenceNumber.length);
-
-        serverOutput.write(ackPacket);
-        System.out.println("Sent ack: Sequence Number = " + lastSequenceNumber);
     }
 }
