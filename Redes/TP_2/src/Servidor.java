@@ -3,6 +3,7 @@ import java.net.*;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.HashMap;
 
 public class Servidor {
     public final static int SERVICE_PORT=51551;
@@ -26,6 +27,8 @@ public class Servidor {
             long fileSize = 3;
             String fileName = "default-file.txt";
 
+            DatagramSocket clientSocket = null;
+
             while (receivedMessageID != 3) {
                 // receiving client messages
                 messageSize = serverInput.read(receivedData, 0, receivedData.length);
@@ -34,8 +37,10 @@ public class Servidor {
 
                 switch (receivedMessageID) {
                     case 1: // hello message
-                         System.out.println("Hello message received. Allocating client port");
+                        System.out.println("Hello message received. Allocating client port");
 
+                        clientSocket = new DatagramSocket();
+                        clientPort = clientSocket.getLocalPort();
                         byte[] portInBytes = ByteBuffer.allocate(4).putInt(clientPort).array();
 
                         System.out.println("Port allocated: " + clientPort);
@@ -65,7 +70,7 @@ public class Servidor {
                 }
             }
 
-            DatagramSocket clientSocket = new DatagramSocket(clientPort);
+
             String destinyFile = (fileName.substring(0, fileName.indexOf(".")) + "_received"
                     + fileName.substring(fileName.indexOf("."))).trim();
 
@@ -77,12 +82,14 @@ public class Servidor {
             int lastSequenceNumber = -1;
             int payloadSize = 0;
             int packetSize = 1000;
+            int windowSize = 64;
             int numberOfPackets = (int) (fileSize/packetSize);
 
             if (fileSize % packetSize != 0)
                 numberOfPackets++;
 
-            System.out.println(numberOfPackets);
+            HashMap<Integer, byte[]> packetsReceived = new HashMap<Integer, byte[]>();
+
             while (!lastMessageFlag) {
                 byte[] message = new byte[1024];
                 byte[] fileByteArray = new byte[packetSize];
@@ -94,17 +101,27 @@ public class Servidor {
                 receivedMessageID = (int) ByteBuffer.wrap(Arrays.copyOfRange(message, 0, 2)).getShort();
                 sequenceNumber = ByteBuffer.wrap(Arrays.copyOfRange(message, 2, 6)).getInt();
                 packetSize = ByteBuffer.wrap(Arrays.copyOfRange(message, 6, 8)).getShort();
+                fileByteArray = Arrays.copyOfRange(message, 8, 8 + packetSize);
 
 
                 if (sequenceNumber == (lastSequenceNumber + 1)) {
                     lastSequenceNumber = sequenceNumber;
 
-                    fileByteArray = Arrays.copyOfRange(message, 8, 8 + packetSize);
-
                     fileOutput.write(fileByteArray);
                     System.out.println("Received: Sequence number = " + sequenceNumber + " - Size: " + packetSize);
 
                     sendAck(lastSequenceNumber, serverOutput);
+
+                    int lastUntilNow = lastSequenceNumber;
+                    for(int i = lastUntilNow + 1; i < lastUntilNow + windowSize && i < numberOfPackets -1; i++) {
+                        if(packetsReceived.get(i) == null) {
+                           break;
+                        }
+                        fileOutput.write(packetsReceived.get(i));
+                        sendAck(i, serverOutput);
+                        packetsReceived.remove(i);
+                        lastSequenceNumber = i;
+                    }
                     if (sequenceNumber == numberOfPackets - 1) {
                         byte[] endMessage = new byte[2];
 
@@ -125,9 +142,13 @@ public class Servidor {
                     } else {
                         // Resend acknowledgement for last packet received
                         sendAck(lastSequenceNumber, serverOutput);
+
+                        packetsReceived.put(sequenceNumber, fileByteArray);
                     }
                 }
             }
+
+
 
             clientSocket.close();
             System.out.println("Closing connection " + clientConn);

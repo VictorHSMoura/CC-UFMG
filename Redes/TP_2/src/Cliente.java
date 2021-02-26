@@ -104,39 +104,48 @@ public class Cliente {
             Vector<byte[]> sentMessageList = new Vector<>();
             Random randomNumber = new Random();
 
+            int numberOfPackets = (int) (fileByteArray.length/payloadSize);
+
+            if (fileByteArray.length % payloadSize != 0)
+                numberOfPackets++;
+
             int i = 0;
-            while (i < fileByteArray.length) {
-                try {
-                    header = sentMessageList.get(sequenceNumber);
-                    retransmit = false;
-                } catch (ArrayIndexOutOfBoundsException e) {
-                    int msgSize = payloadSize;
-                    if ((i+payloadSize) >= fileByteArray.length) {
-                        msgSize = fileByteArray.length - i;
-                        lastMessageFlag = true;
+            while (!endOfCommunication) {
+                if (sequenceNumber < numberOfPackets) {
+                    try {
+                        header = sentMessageList.get(sequenceNumber);
+                        retransmit = false;
+                    } catch (ArrayIndexOutOfBoundsException e) {
+                        int msgSize = payloadSize;
+                        if ((i + payloadSize) >= fileByteArray.length) {
+                            msgSize = fileByteArray.length - i;
+                            lastMessageFlag = true;
+                        }
+
+                        sentMessageID = 6;
+                        messageID = ByteBuffer.allocate(2).putShort((short) sentMessageID).array();
+
+                        byte[] sequenceNumberInBytes = ByteBuffer.allocate(4).putInt(sequenceNumber).array();
+
+                        byte[] payloadSizeInBytes = ByteBuffer.allocate(2).putShort((short) msgSize).array();
+
+                        header = new byte[messageID.length + sequenceNumberInBytes.length + payloadSizeInBytes.length + msgSize];
+
+                        System.arraycopy(messageID, 0, header, 0, messageID.length);
+                        System.arraycopy(sequenceNumberInBytes, 0, header, messageID.length, sequenceNumberInBytes.length);
+                        System.arraycopy(payloadSizeInBytes, 0, header,
+                                (messageID.length + sequenceNumberInBytes.length), payloadSizeInBytes.length);
+                        System.arraycopy(fileByteArray, i, header,
+                                (messageID.length + sequenceNumberInBytes.length + payloadSizeInBytes.length),
+                                msgSize);
+
+                        // Add the message to the sent message list
+                        sentMessageList.add(header);
+
                     }
 
-                    sentMessageID = 6;
-                    messageID = ByteBuffer.allocate(2).putShort((short) sentMessageID).array();
-
-                    byte[] sequenceNumberInBytes = ByteBuffer.allocate(4).putInt(sequenceNumber).array();
-
-                    byte[] payloadSizeInBytes = ByteBuffer.allocate(2).putShort((short) msgSize).array();
-
-                    header = new byte[messageID.length + sequenceNumberInBytes.length + payloadSizeInBytes.length + msgSize];
-
-                    System.arraycopy(messageID, 0, header, 0, messageID.length);
-                    System.arraycopy(sequenceNumberInBytes, 0, header, messageID.length, sequenceNumberInBytes.length);
-                    System.arraycopy(payloadSizeInBytes, 0, header,
-                            (messageID.length + sequenceNumberInBytes.length), payloadSizeInBytes.length);
-                    System.arraycopy(fileByteArray, i, header,
-                            (messageID.length + sequenceNumberInBytes.length + payloadSizeInBytes.length),
-                            msgSize);
-
-                    // Add the message to the sent message list
-                    sentMessageList.add(header);
+                    i += payloadSize;
                 }
-                i += payloadSize;
 
                 DatagramPacket sendPacket = new DatagramPacket(header, header.length, ip, UDPPort);
 
@@ -179,13 +188,13 @@ public class Cliente {
                     }
                 }
 
-                if(!retransmit)
-                    if(randomNumber.nextInt(10) != 0) {
+                if(!retransmit && sequenceNumber < numberOfPackets) {
+                    if (randomNumber.nextInt(10) != 0) {
                         // Package the message
                         udpSocket.send(sendPacket);
-                        System.out.println("Sent: Sequence number = " + sequenceNumber + " - Size: " + payloadSize);
+                        System.out.println("Sent: Sequence number = " + sequenceNumber);
                     }
-
+                }
 
                 // Check for acknowledgements
                 while (true) {
@@ -222,72 +231,15 @@ public class Cliente {
                 sequenceNumber += 1;
             }
 
-            if (!endOfCommunication) {
-                while (!lastIsAcked) {
+            System.out.println("END message received");
 
-                    boolean correctPacket = false;
-                    boolean ackReceived = false;
+            // closing resources
+            is.close();
+            out.close();
 
-                    while (!correctPacket) {
-                        // Check for an ack
-                        byte[] ack = new byte[6];
-
-                        try {
-                            clientSocket.setSoTimeout(50);
-                            is.read(ack, 0, ack.length);
-                            ackNumber = ByteBuffer.wrap(Arrays.copyOfRange(ack, 2, 6)).getInt();
-                            ackReceived = true;
-                        } catch (SocketTimeoutException e) {
-                            ackReceived = false;
-                        }
-
-                        // If its the last packet
-                        if (lastAcked >= sequenceNumber - 1) {
-                            lastIsAcked = true;
-                            break;
-                        }
-                        // Break if we receive acknowledgement so that we can send next packet
-                        if (ackReceived) {
-                            if(ackNumber != 0)
-                                System.out.println("Ack received for packet = " + ackNumber);
-                            if (ackNumber >= (lastAcked + 1)) {
-                                lastAcked = ackNumber;
-                            }
-                            correctPacket = true;
-                            //                        break; // Break if there is an ack so the next packet can be sent
-                        } else { // Resend the packet
-                            // Resend the packet following the last acknowledged packet and all following that (cumulative acknowledgement)
-                            for (int packInd = 0; packInd != (sequenceNumber - lastAcked); packInd++) {
-                                byte[] retryMessage = new byte[1024];
-                                int ind;
-                                if(lastAcked == -1) //error on the first packet
-                                    ind = packInd;
-                                else
-                                    ind = packInd + lastAcked;
-
-                                retryMessage = sentMessageList.get(ind);
-
-                                System.out.println("Resending: Sequence Number = " + (ind));
-                                DatagramPacket retryPacket = new DatagramPacket(retryMessage, retryMessage.length, ip, UDPPort);
-                                udpSocket.send(retryPacket);
-                            }
-                        }
-                    }
-                }
-                endOfCommunication = true;
-            }
-            if (endOfCommunication) {
-                System.out.println("END message received");
-
-                // closing resources
-                is.close();
-                out.close();
-
-
-                System.out.println("Closing this connection : " + clientSocket);
-                clientSocket.close();
-                System.out.println("Connection closed");
-            }
+            System.out.println("Closing this connection : " + clientSocket);
+            clientSocket.close();
+            System.out.println("Connection closed");
 
         } catch (Exception e) {
             e.printStackTrace();
