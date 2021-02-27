@@ -59,7 +59,7 @@ public class Cliente {
         return new Tuple2<>(header, sentMessageList);
     }
 
-    public static void sendFile(byte[] fileByteArray, InetAddress ip, int UDPPort, Socket clientSocket,
+    public static int sendFile(byte[] fileByteArray, InetAddress ip, int UDPPort, Socket clientSocket,
                                 InputStream is, DatagramSocket udpSocket) throws Exception {
         int sequenceNumber = 0;
         int ackNumber = -1;
@@ -67,11 +67,11 @@ public class Cliente {
         boolean retransmit = false;
         int lastAcked = -1;
         byte[] header = new byte[1024];
+        int retransmissions = 0;
 
         int windowSize = 64;
         int payloadSize = 1000;
         Vector<byte[]> sentMessageList = new Vector<>();
-        Random randomNumber = new Random();
 
         int numberOfPackets = (fileByteArray.length/payloadSize);
 
@@ -120,6 +120,7 @@ public class Cliente {
                             i = (lastAcked + 1) * payloadSize;
                             sequenceNumber = lastAcked;
                             retransmit = true;
+                            retransmissions++;
                             System.out.println("Retransmitting from packet " + (sequenceNumber + 1));
                             break;
                         }
@@ -140,7 +141,7 @@ public class Cliente {
                 byte[] ack = new byte[6];
 
                 try {
-                    clientSocket.setSoTimeout(20);
+                    clientSocket.setSoTimeout(100);
                     int bytes = is.read(ack, 0, ack.length);
                     int receivedMessageID = ByteBuffer.wrap(Arrays.copyOfRange(ack, 0, 2)).getShort();
                     ackNumber = ByteBuffer.wrap(Arrays.copyOfRange(ack, 2, 6)).getInt();
@@ -161,6 +162,7 @@ public class Cliente {
 
             sequenceNumber += 1;
         }
+        return retransmissions;
     }
 
     public static void main(String[] args) {
@@ -231,9 +233,10 @@ public class Cliente {
                 }
             }
             Thread.sleep(50);
-            sendFile(fileByteArray, ip, UDPPort, clientSocket, is, udpSocket);
+            int retransmissions = sendFile(fileByteArray, ip, UDPPort, clientSocket, is, udpSocket);
 
             System.out.println("END message received");
+            System.out.println("Number of retranmissions: " + retransmissions);
 
             // closing resources
             is.close();
