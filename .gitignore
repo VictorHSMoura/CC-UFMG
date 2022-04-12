@@ -1,4 +1,6 @@
 .vscode
+*.in
+*.out
 
 # Arquivos de redes
 Redes/TP_1/cliente
