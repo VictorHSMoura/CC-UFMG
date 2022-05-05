@@ -1,4 +1,3 @@
-from concurrent.futures import thread
 from threading import Thread, Lock
 from warcio.warcwriter import WARCWriter
 from warcio.statusandheaders import StatusAndHeaders
@@ -60,18 +59,15 @@ class Crawler(Thread):
                     secondaryLock.acquire()
                     ct = datetime.now()
                     checkDelay = self.isOnDelay(page=page, hostDelays=hostDelays, ct=ct)
+                    # store visit time if is on delay time
+                    if checkDelay:
+                        hostDelays[page.host] = ct.timestamp()
                     secondaryLock.release()
 
                     if (checkDelay):
                         page.crawlPage()
 
                         if (page.pageRequest is not None):
-                            secondaryLock.acquire()
-                            # store visit time
-                            ct = datetime.now()
-                            hostDelays[page.host] = ct.timestamp()
-                            secondaryLock.release()
-
                             links = page.getLinks()
                             
                             queueLock.acquire()
