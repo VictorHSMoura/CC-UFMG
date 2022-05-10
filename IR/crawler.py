@@ -1,22 +1,39 @@
-from concurrent.futures import thread
+import argparse
+from os import path
+
 from threading import Thread, Lock
+from time import sleep
 from warcio.warcwriter import WARCWriter
 from warcio.statusandheaders import StatusAndHeaders
+
+from url_normalize import url_normalize
+from url_normalize.tools import deconstruct_url
 
 from webPage import WebPage
 from datetime import datetime, timedelta
 
+import random
+from time import time
 
 class Crawler(Thread):
 
-    def __init__(self):
+    PAGES_PER_DOC = 1000
+    DEFAULT_DELAY = 0.1
+    MAX_TRIES_PER_PAGE = 10
+    MAX_DEPTH = 5
+    SHUFFLE_PAGES = 200
+
+    def __init__(self, id, max_pages, debug):
         Thread.__init__(self)
+        self.id = id
+        self.MAX_PAGES = max_pages
+        self.DEBUG = debug
 
     def isOnDelay(self, page: WebPage, hostDelays: dict, ct: datetime):
         if page.host not in hostDelays.keys():
             return True
 
-        delay = page.delayPolicy() or 0.1
+        delay = page.delayPolicy() or self.DEFAULT_DELAY
         delayDatetime = timedelta(seconds=delay)
         pageTime = datetime.fromtimestamp(hostDelays[page.host])
         
@@ -38,92 +55,161 @@ class Crawler(Thread):
 
         warcWriter.write_record(record)
 
+    def getHost(self, pageURL):
+        return url_normalize(deconstruct_url(pageURL).host)
+
+    # check for URLS that splits in a lot of pages
+    def isBlockedURLS(self, url: str):
+        blocked_parts = ["strava.app.link", "booked", "nochi", "hotelmix", "javascript:"]
+        blocked_ends = [".htm", ".onion", ".pdf"]
+
+        for part in blocked_parts:
+            if part in url: return True
+        
+        for end in blocked_ends:
+            if end in url: return True
+ 
+        return False
+
+    def filterLinks(self, links, page, depth):
+        filtered_links = []
+        for link in links:
+            # add page to visited to prevent adding duplicate pages
+            if not self.isBlockedURLS(link):
+                if self.getHost(link) == page.host and depth < self.MAX_DEPTH:
+                    filtered_links.append([link, depth + 1])
+                elif self.getHost(link) != page.host:
+                    filtered_links.append([link, 0])
+
+        return filtered_links
+
     def run(self):
         global count, queue, visited, hostDelays
         global outFile, writer
-        global queueLock, secondaryLock, writeLock
+        global dataLock, writeLock
 
-
-        while (count < 1000):
-            url = None
-            page = None
-
-            queueLock.acquire()
-            if (len(queue) > 0):
-                url = queue.pop(0)
-                page = WebPage(url)
-            queueLock.release()
-
+        while (count < self.MAX_PAGES):
             try:
-                secondaryLock.acquire()
-                checkPageVisited = url is not None and page.pageURL not in visited
-                secondaryLock.release()
+                url = None
+                depth = 0
+                page = None
 
-                if (checkPageVisited):
-                    if(page.crawlable() and page.isHTML()):
-                        secondaryLock.acquire()
+                dataLock.acquire()
+
+                url, depth = queue.pop(0)
+                page = WebPage(url)
+
+                # shuffle queue to prevent crawling the same host for a long time
+                if len(queue) > 0 and len(queue) % self.SHUFFLE_PAGES == 0:
+                    random.shuffle(queue)
+
+                dataLock.release()
+
+                if url is None or not page.crawlable():
+                    continue
+
+                repeat = 0
+                while repeat < self.MAX_TRIES_PER_PAGE:
+                    try:
+                        dataLock.acquire()
+
                         ct = datetime.now()
                         checkDelay = self.isOnDelay(page=page, hostDelays=hostDelays, ct=ct)
-                        secondaryLock.release()
+                        # store visit time if is on delay time
+                        if checkDelay:
+                            hostDelays[page.host] = ct.timestamp()
 
-                        if (checkDelay):
+                        dataLock.release()
+
+                        if checkDelay:
                             page.crawlPage()
 
-                            if (page.pageRequest is not None):
-                                
-                                secondaryLock.acquire()
-                                # check again if page was visited
-                                if page.pageURL in visited:
-                                    secondaryLock.release()
-                                    continue
+                            if not page.isHTML:
+                                break
 
-                                # add page to visited pages and store visit time
-                                ct = datetime.now()
-                                visited.add(page.pageURL)
-                                hostDelays[page.host] = ct.timestamp()
-                                secondaryLock.release()
+                            if self.DEBUG:
+                                page.printDebug(ct.timestamp())
 
-                                links = page.getLinks()
-                                
-                                queueLock.acquire()
-                                for link in links:
-                                    if link not in visited:
-                                        queue.append(link)
-                                queueLock.release()
+                            writeLock.acquire()
 
-                                writeLock.acquire()
-                                if count < 1000:
-                                    print(page.pageURL)
-                                    if (count > 0 and count % 100 == 0):
-                                        print("Changing File")
-                                        outFile.close()
-                                        outFile = open(f'corpus/crawl{int(count/100)}.warc.gz', 'wb')
-                                        writer = WARCWriter(outFile, gzip=True)
-                                    
-                                    self.writePageToFile(page=page, warcWriter=writer)
-                                    count+=1
+                            if count >= self.MAX_PAGES:
                                 writeLock.release()
-                                
+                                break
+                            
+                            if count > 0 and count % self.PAGES_PER_DOC == 0:
+                                outFile.close()
+                                outFile = open(f'corpus/crawl{int(count/self.PAGES_PER_DOC)}.warc.gz', 'wb')
+                                writer = WARCWriter(outFile, gzip=True)
+                            
+                            self.writePageToFile(page=page, warcWriter=writer)
+                            count+=1
+
+                            writeLock.release()
+
+                            links = page.getLinks()
+                            filtered_links = self.filterLinks(links, page, depth)
+                            
+                            dataLock.acquire()
+                            
+                            filtered = [link for link in filtered_links if link[0] not in visited]
+                            queue += filtered
+                            visited.update([link[0] for link in filtered])
+
+                            dataLock.release()
+                            
+                            break
+                            
                         else:
-                            queueLock.acquire()
-                            queue.append(url)
-                            queueLock.release()
+                            repeat+=1
+                            
+                    except:
+                        repeat+=1
+                        sleep(page.delayPolicy() or self.DEFAULT_DELAY)
+
             except:
-                if secondaryLock.locked():
-                    secondaryLock.release()
+                if dataLock.locked():
+                    dataLock.release()
 
-count = 0
-queue = ["https://g1.globo.com"]
-visited = set()
-hostDelays = {}
+def parseInput():
+    parser = argparse.ArgumentParser(description='IR input values')
+    parser.add_argument('-s', dest='seeds', type=str, required=True,
+                        help='the path to a file containing a list of seed URLs (one URL per line) for initializing the crawling process.')
+    parser.add_argument('-n', dest='limit', type=int, required=True,
+                        help='the target number of webpages to be crawled; the crawler should stop its execution once this target is reached.')
+    parser.add_argument('-d', dest='debug', default=False, action='store_true')
+    args = parser.parse_args()
 
-queueLock = Lock()
-secondaryLock = Lock()
-writeLock = Lock()
+    if not path.exists(args.seeds):
+        print("Seeds file invalid")
+        exit(1)
 
-outFile = open('corpus/crawl0.warc.gz', 'wb')
-writer = WARCWriter(outFile, gzip=True)
+    with open(args.seeds, 'r') as seeds_f:
+        seeds_arg = [line[:-1] for line in seeds_f.readlines()]
+    
+    return [seeds_arg, args.limit, args.debug]
 
-for i in range(100):
-    t = Crawler()
-    t.start()
+if __name__ == "__main__":
+    
+    seeds, limit, debug = parseInput()
+
+    count = 0
+    queue = [[seed, 0] for seed in seeds]
+    visited = set(seeds)
+    hostDelays = {}
+
+    dataLock = Lock()
+    writeLock = Lock()
+
+    outFile = open('corpus/crawl0.warc.gz', 'wb')
+    writer = WARCWriter(outFile, gzip=True)
+
+    start = time()
+    threads = [Crawler(i, limit, debug) for i in range(100)]
+
+    for t in threads:
+        t.start()
+
+    for t in threads:
+        t.join()
+
+    print(time() - start)
