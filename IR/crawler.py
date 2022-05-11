@@ -14,6 +14,7 @@ from datetime import datetime, timedelta
 
 import random
 from time import time
+# import yappi
 
 class Crawler(Thread):
 
@@ -21,7 +22,7 @@ class Crawler(Thread):
     DEFAULT_DELAY = 0.1
     MAX_TRIES_PER_PAGE = 10
     MAX_DEPTH = 5
-    SHUFFLE_PAGES = 200
+    SHUFFLE_PAGES = 250
 
     def __init__(self, id, max_pages, debug):
         Thread.__init__(self)
@@ -88,22 +89,26 @@ class Crawler(Thread):
         global outFile, writer
         global dataLock, writeLock
 
+        queueTime = 0
+
         while (count < self.MAX_PAGES):
             try:
                 url = None
                 depth = 0
                 page = None
 
+                start = time()
                 dataLock.acquire()
+                queueTime += time() - start
 
                 url, depth = queue.pop(0)
-                page = WebPage(url)
 
                 # shuffle queue to prevent crawling the same host for a long time
-                if len(queue) > 0 and len(queue) % self.SHUFFLE_PAGES == 0:
+                if count > 0 and count % self.SHUFFLE_PAGES == 0:
                     random.shuffle(queue)
-
                 dataLock.release()
+
+                page = WebPage(url)
 
                 if url is None or not page.crawlable():
                     continue
@@ -137,6 +142,7 @@ class Crawler(Thread):
                                 break
                             
                             if count > 0 and count % self.PAGES_PER_DOC == 0:
+                                print(f"File {int(count/self.PAGES_PER_DOC)}")
                                 outFile.close()
                                 outFile = open(f'corpus/crawl{int(count/self.PAGES_PER_DOC)}.warc.gz', 'wb')
                                 writer = WARCWriter(outFile, gzip=True)
@@ -149,8 +155,10 @@ class Crawler(Thread):
                             links = page.getLinks()
                             filtered_links = self.filterLinks(links, page, depth)
                             
+                            start = time()
                             dataLock.acquire()
-                            
+                            queueTime += time() - start
+
                             filtered = [link for link in filtered_links if link[0] not in visited]
                             queue += filtered
                             visited.update([link[0] for link in filtered])
@@ -158,9 +166,6 @@ class Crawler(Thread):
                             dataLock.release()
                             
                             break
-                            
-                        else:
-                            repeat+=1
                             
                     except:
                         repeat+=1
@@ -200,10 +205,10 @@ if __name__ == "__main__":
     dataLock = Lock()
     writeLock = Lock()
 
+    print(f"File 0")
     outFile = open('corpus/crawl0.warc.gz', 'wb')
     writer = WARCWriter(outFile, gzip=True)
 
-    start = time()
     threads = [Crawler(i, limit, debug) for i in range(100)]
 
     for t in threads:
@@ -211,5 +216,3 @@ if __name__ == "__main__":
 
     for t in threads:
         t.join()
-
-    print(time() - start)

@@ -37,13 +37,16 @@ class WebPage:
             url=self.pageURL,
             headers={"Accept-Encoding": "identity", "User-Agent": self.userAgent},
             stream=True,
-            timeout=1
+            timeout=self.timeout
         )
 
         if req is not None:
             self.pageRequest = req
             self.html = req.text
             self.isHTML = "text/html" in req.headers["content-type"]
+
+            if self.isHTML:
+                self.soup = BeautifulSoup(self.html, "html.parser")
 
     def getRaw(self):
         return BytesIO(bytes(self.html, "utf-8"))
@@ -59,10 +62,9 @@ class WebPage:
         
         return url_normalize(link)
 
-    def getLinks(self):
-        soup = BeautifulSoup(self.html, "html.parser")
+    def getLinks(self): 
         links = []
-        for link in soup.find_all("a"):
+        for link in self.soup.find_all("a"):
             normalizedLink = self.normalizeLink(link.get("href"))
             if normalizedLink is not None:
                 links.append(normalizedLink)
