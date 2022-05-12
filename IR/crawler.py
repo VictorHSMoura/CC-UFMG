@@ -164,8 +164,12 @@ class Crawler(Thread):
                             visited.update([link[0] for link in filtered])
 
                             dataLock.release()
-                            
-                            break
+
+                        else:
+                            dataLock.acquire()
+                            queue.append(url)
+                            dataLock.release()    
+                        break
                             
                     except:
                         repeat+=1
@@ -209,7 +213,7 @@ if __name__ == "__main__":
     outFile = open('corpus/crawl0.warc.gz', 'wb')
     writer = WARCWriter(outFile, gzip=True)
 
-    threads = [Crawler(i, limit, debug) for i in range(100)]
+    threads = [Crawler(i, limit, debug) for i in range(12)]
 
     for t in threads:
         t.start()
