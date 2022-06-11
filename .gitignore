@@ -10,3 +10,7 @@ Redes/TP_1/servidor
 # Arquivos de compilação e classes python
 *.o
 *.pyc
+
+IR/PA*/pa*
+IR/PA*/*corpus*
+IR/PA2/dumps
