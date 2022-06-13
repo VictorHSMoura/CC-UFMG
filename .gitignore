@@ -11,6 +11,9 @@ Redes/TP_1/servidor
 *.o
 *.pyc
 
-IR/PA*/pa*
-IR/PA*/*corpus*
-IR/PA2/dumps
+# Arquivos de IR
+__pycache__
+IR/PA[0-9]/pa[0-9]
+IR/PA[0-9]/*corpus*
+IR/PA[0-9]/dumps
+IR/PA[0-9]/*.txt
