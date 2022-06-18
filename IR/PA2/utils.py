@@ -1,6 +1,8 @@
 from math import ceil
 from os import path, system
 
+MEGABYTE = 1024 * 1024
+
 def merge_docs(docs1, docs2):
     docs = ""
     d1 = 0
@@ -83,21 +85,31 @@ def merge(total_files, index_path):
         t = ceil(t/2)
 
     system(f"mv dumps/dump_0_{step}.txt {index_path}")
-    calc_index_seek(index_path)
+    
 
-def calc_index_seek(index_file):
+def calc_index_metric_and_seek(index_file):
     seek = 0
     path_dir = path.dirname(path.abspath(index_file))
+    
+    index_size = path.getsize(index_file)/ MEGABYTE
+    n_list = 0
+    total_size_list = 0
     with open(index_file, 'r') as index:
         with open(f'{path_dir}/seeks.txt', 'w') as s:
             while True:
                 line = index.readline()
                 if len(line) > 0:
-                    term, _ = line.split(" ", 1)
-                    seek += len(line.encode('utf-8'))
+                    term, docs = line.split(" ", 1)
                     s.write(f'{term} {seek}\n')
+                    seek += len(line.encode('utf-8'))
+                    
+                    n_list += 1
+                    docs = docs.split(" \n")[0]
+                    total_size_list += len(docs.split(" ")) // 2
                 else:
                     break
+
+    return index_size, n_list, float(total_size_list)/n_list
 
 def sort_page_list(f1, f2, step):
     f1_name = f"dumps/pages_{f1}_{step}.txt"

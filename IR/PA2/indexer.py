@@ -1,8 +1,6 @@
 import gc
-from math import ceil
-import re
 import sys
-from os import path, system
+from os import path
 import resource
 import argparse
 from time import time
@@ -12,10 +10,10 @@ from warcio.archiveiterator import ArchiveIterator
 import nltk
 from nltk.stem.rslp import RSLPStemmer
 
-from utils import merge, merge_page_list, save_dict_and_page_list
+from utils import calc_index_metric_and_seek, merge, merge_page_list, save_dict_and_page_list
 
 MEGABYTE = 1024 * 1024
-NUM_PROCESS = 12
+NUM_PROCESS = 4
 FILES = 96
 PAGES_PER_FILE = 10000
 
@@ -31,25 +29,23 @@ def get_mem():
 
     return int(memusage.strip()) / 1024
 
+def get_dict_size(word_dict):
+    return sum([len(word_dict[word]) for word in word_dict])
 
 def build_index(id, dump_id, memory, corpus_path, lock, start, end):
     memory_limit(memory)
 
     try:
-        max_memory = (0.8 * memory)
+        max_size = 2e6 * float(memory)/1024
         stemmer = RSLPStemmer()
 
         word_dict = {}
         page_list = []
 
-        page_id = PAGES_PER_FILE * start
+        print(f"Process start: {id} / Memory limit: {memory}")
 
-        print(f"Process start: {id} / Memory limit: {max_memory}")
-
-        for i in range(start, end):
-            print(f"Process {id} - Page: {page_id}")
-            print(f"Real MEM: {get_mem()}\n")
-            
+        for i in range(start, end):            
+            page_id = PAGES_PER_FILE * i
             with open(f"{corpus_path}/part-{i}.warc.gz.kaggle", "rb") as stream:
                 for record in ArchiveIterator(stream):
                     if record.rec_type == "response":
@@ -65,20 +61,23 @@ def build_index(id, dump_id, memory, corpus_path, lock, start, end):
                             word_dict[word].append([page_id, processed.count(word)])
 
                         page_list.append([page_id, url, len(processed)])
+                        
 
-                        if (get_mem() > max_memory):
+                        if (get_dict_size(word_dict) > max_size):
                             lock.acquire()
                             print(f"\nProcess {id} dump - MEM: {get_mem()}\n")
                             save_dict_and_page_list(word_dict=word_dict, page_list=page_list, id=dump_id.value)
                             dump_id.value += 1
                             
                             word_dict.clear()
+                            page_list.clear()
                             gc.collect()
 
                             lock.release()
 
-                        if page_id > 0 and page_id % 250 == 0:
-                            gc.collect()
+                        if page_id > 0 and page_id % 1000 == 0:
+                            print(f"Process {id} - Page: {page_id}")
+                            print(f"Real MEM: {get_mem()}\n")
 
                         page_id += 1
                     
@@ -108,6 +107,7 @@ def main():
 
     global dictionary
 
+    st = time()
     nltk_downloads()
     dictionary = get_dictionary()
 
@@ -127,7 +127,14 @@ def main():
         processes[p].join()
 
     merge(dump_id.value, args.index_path)
+    size, n_list, avg = calc_index_metric_and_seek(args.index_path)
     merge_page_list(dump_id.value, args.index_path)
+    
+    print(f'{{ "Index Size": {int(size)},')
+    print(f'  "Elapsed Time": {int(time() - st)},')
+    print(f'  "Number of Lists": {n_list},')
+    print(f'  "Average List Size": {avg:.2f}"}}')
+    
 
 def nltk_downloads():
     # necessary downloads
@@ -158,9 +165,9 @@ if __name__ == "__main__":
 
     memory_limit(args.memory_limit)
     try:
-        start = time()
+        
         main()
-        print(f"Total Time: {time() - start}")
+        
     except MemoryError:
         sys.stderr.write('\n\nERROR: Memory Exception\n')
         sys.exit(1)

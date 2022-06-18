@@ -17,3 +17,4 @@ IR/PA[0-9]/pa[0-9]
 IR/PA[0-9]/*corpus*
 IR/PA[0-9]/dumps
 IR/PA[0-9]/*.txt
+temp
