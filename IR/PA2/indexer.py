@@ -13,7 +13,7 @@ from nltk.stem.rslp import RSLPStemmer
 from utils import calc_index_metric_and_seek, merge, merge_page_list, save_dict_and_page_list
 
 MEGABYTE = 1024 * 1024
-NUM_PROCESS = 4
+NUM_PROCESS = 12
 FILES = 96
 PAGES_PER_FILE = 10000
 
@@ -42,8 +42,6 @@ def build_index(id, dump_id, memory, corpus_path, lock, start, end):
         word_dict = {}
         page_list = []
 
-        print(f"Process start: {id} / Memory limit: {memory}")
-
         for i in range(start, end):            
             page_id = PAGES_PER_FILE * i
             with open(f"{corpus_path}/part-{i}.warc.gz.kaggle", "rb") as stream:
@@ -65,7 +63,6 @@ def build_index(id, dump_id, memory, corpus_path, lock, start, end):
 
                         if (get_dict_size(word_dict) > max_size):
                             lock.acquire()
-                            print(f"\nProcess {id} dump - MEM: {get_mem()}\n")
                             save_dict_and_page_list(word_dict=word_dict, page_list=page_list, id=dump_id.value)
                             dump_id.value += 1
                             
@@ -74,10 +71,6 @@ def build_index(id, dump_id, memory, corpus_path, lock, start, end):
                             gc.collect()
 
                             lock.release()
-
-                        if page_id > 0 and page_id % 1000 == 0:
-                            print(f"Process {id} - Page: {page_id}")
-                            print(f"Real MEM: {get_mem()}\n")
 
                         page_id += 1
                     
@@ -92,7 +85,6 @@ def build_index(id, dump_id, memory, corpus_path, lock, start, end):
 
     except MemoryError:
         sys.stderr.write('\n\nERROR: Memory Exception in Process\n')
-        print(f"Process {id} - MEM: {get_mem()}")
         sys.exit(1)
 
 
@@ -138,11 +130,12 @@ def main():
 
 def nltk_downloads():
     # necessary downloads
-    nltk.download('punkt')
-    nltk.download('rslp')
-    nltk.download('stopwords')
-    nltk.download('words')
-    nltk.download('mac_morpho')
+    nltk.download('punkt', quiet=True)
+    nltk.download('rslp', quiet=True)
+    nltk.download('stopwords', quiet=True)
+    nltk.download('words', quiet=True)
+    nltk.download('floresta', quiet=True)
+    nltk.download('mac_morpho', quiet=True)
 
 def get_dictionary():
     dictionary = set(word.lower() for word in nltk.corpus.words.words() if word)

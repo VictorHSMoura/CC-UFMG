@@ -1,5 +1,6 @@
 # You can (and must) freely edit this file (add libraries, functions and calls) to implement your query processor
 import argparse
+from math import log
 from multiprocessing import Process, Lock
 from os import path
 
@@ -39,15 +40,18 @@ def process_query(query, index_file, ranker):
                 if term in index:
                     docs = index[term]
                     doc_id = find_doc(docs, target)
-                    if doc_id != -1:
-                        f = docs[doc_id][1]
-                        idf = N_DOCS/float(len(docs))
+                    if doc_id == -1:
+                        score = 0
+                        break
 
-                        if ranker == "TFIDF":
-                            tf = f / doc_size
-                            score +=  tf * idf
-                        else:
-                            score += idf * (f * (k + 1)) / (f + k * (1 - b + (b * doc_size/avgdl)))
+                    f = docs[doc_id][1]
+                    idf = log(N_DOCS/float(len(docs)))
+
+                    if ranker == "TFIDF":
+                        tf = f / doc_size
+                        score +=  tf * idf
+                    else:
+                        score += idf * (f * (k + 1)) / (f + k * (1 - b + (b * doc_size/avgdl)))
 
 
             results.append([target, score, url])
@@ -73,8 +77,17 @@ def parse_args():
                         help='ranking function [TFIDF, BM25].')
     return parser.parse_args()
 
+def nltk_downloads():
+    # necessary downloads
+    nltk.download('punkt', quiet=True)
+    nltk.download('rslp', quiet=True)
+    nltk.download('stopwords', quiet=True)
+    nltk.download('words', quiet=True)
+
 if __name__ == "__main__":
     args = parse_args()
+
+    nltk_downloads()
 
     keys = extract_index_keys(args.index_path)
     avgdl = 0.0
